@@ -10,3 +10,6 @@ A GitHub Pages friendly web app for a location-based team quiz. Teams use one ph
 - Shows the next checkpoint only after each batch is submitted.
 - Uses browser geolocation to unlock each next batch when the team is within a configurable radius, default 80 m.
 - Includes a quizmaster dashboard with a password gate and CSV export.
+
+## Customization ideas
+- Show a live leaderboard after the event ends.
