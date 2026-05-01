@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Workshop PediPaper GO — Quizmaster</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Palace Pursuit: Quizmaster Dashboard</title>
+  <link rel="icon" type="image/png" href="lasige_icon.png" />
+  <link rel="stylesheet" href="style.css?v=20260501-admin-cluster-height" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script defer src="admin.js"></script>
+  <script defer src="admin.js?v=20260501-archive-reset"></script>
 </head>
-<body>
+<body class="admin-page">
   <header class="topbar">
     <div>
-      <h1>Quizmaster dashboard</h1>
-      <p class="subtitle">Workshop PediPaper GO</p>
+      <span class="eyebrow">11th LASIGE Workshop</span>
+      <h1>Palace Pursuit: Quizmaster Dashboard</h1>
+      <p class="subtitle">Track team progress, answers, scores, and completion times during the challenge.</p>
     </div>
     <a class="admin-link" href="index.html">Back to team page</a>
   </header>
@@ -21,7 +23,7 @@
   <main class="container">
     <section class="card" id="gateCard">
       <h2>Protected view</h2>
-      <p>Enter the quizmaster password to reveal all teams, answers, and scores.</p>
+      <p>Enter the quizmaster password to reveal all teams, answers, scores, and completion times.</p>
       <form id="passwordForm">
         <label>
           Password
@@ -29,22 +31,22 @@
         </label>
         <button type="submit">Open dashboard</button>
       </form>
-      <p class="hint warning">Password is a front-end gate, only to be used by the organizing team.</p>
+      <p class="hint warning">Only organizers should use this dashboard during the event.</p>
     </section>
 
     <section class="card hidden" id="dashboardCard">
-      <div class="row between center">
+      <div class="dashboard-header row between center">
         <div>
-          <h2>Live teams</h2>
+          <h2>Mission Control</h2>
           <p id="dashboardMeta"></p>
         </div>
-        <div class="row">
+        <div class="dashboard-actions row">
           <button id="refreshBtn" type="button">Refresh</button>
           <button id="exportBtn" type="button">Export CSV</button>
           <button id="resetBtn" type="button" class="secondary">Reset game</button>
         </div>
       </div>
-      <p class="hint warning">Reset game deletes all online team names, answers, stages, and scores for everyone.</p>
+      <p class="hint warning">Reset game deletes all online team names, answers, stages, scores, and times for everyone.</p>
       <div class="table-wrap">
         <table id="teamsTable">
           <thead>
@@ -53,6 +55,7 @@
               <th>Stage</th>
               <th>Finished</th>
               <th>Score</th>
+              <th>Time</th>
               <th>Last update</th>
               <th>Answers</th>
             </tr>

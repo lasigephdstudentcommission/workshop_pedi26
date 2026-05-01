@@ -5,8 +5,16 @@ create table if not exists public.teams (
   answers jsonb not null default '{}'::jsonb,
   score integer not null default 0,
   finished boolean not null default false,
+  started_at timestamptz,
+  completed_at timestamptz,
+  elapsed_seconds integer not null default 0,
   updated_at timestamptz not null default now()
 );
+
+alter table public.teams
+  add column if not exists started_at timestamptz,
+  add column if not exists completed_at timestamptz,
+  add column if not exists elapsed_seconds integer not null default 0;
 
 alter table public.teams enable row level security;
 
