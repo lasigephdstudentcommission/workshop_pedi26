@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Workshop PediPaper GO</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Palace Pursuit: LASIGE Edition</title>
+  <link rel="icon" type="image/png" href="lasige_icon.png" />
+  <link rel="stylesheet" href="style.css?v=20260501-quiz-media-map" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script defer src="app.js"></script>
+  <script src="config.js?v=20260501-pires-mendes-image"></script>
+  <script defer src="app.js?v=20260501-quiz-media-map"></script>
 </head>
 <body>
   <div class="page-glow page-glow-1"></div>
@@ -15,9 +16,9 @@
 
   <header class="topbar">
     <div>
-      <span class="eyebrow">Outdoor event challenge</span>
-      <h1>Workshop PediPaper GO</h1>
-      <p class="subtitle">Race between checkpoints, unlock each stage on location, and conquer all 15 questions.</p>
+      <span class="eyebrow">11th LASIGE Workshop</span>
+      <h1>Palace Pursuit: LASIGE Edition</h1>
+      <p class="subtitle">Race between checkpoints, unlock each stage on location, and conquer all 18 questions.</p>
     </div>
     <a class="admin-link" href="admin.html">Quizmaster view</a>
   </header>
@@ -25,92 +26,93 @@
   <main class="container">
     <section class="card hero-card">
       <div class="hero-copy">
-        <span class="hero-badge">5 checkpoints · 15 questions · 1 team phone</span>
-        <h2>Explore, solve, and submit as you go</h2>
+        <span class="hero-badge">6 checkpoints / 18 questions / 1 team phone</span>
+        <h2>Explore, solve, submit, move.</h2>
         <p>Pick a team name, answer each batch of 3 questions, then head to the next location to unlock the following stage.</p>
       </div>
       <div class="hero-stats">
         <div class="hero-stat">
-          <strong>50 m</strong>
-          <span>unlock radius</span>
+          <strong>80 m</strong>
+          <span>unlock zone</span>
         </div>
         <div class="hero-stat">
-          <strong>3</strong>
-          <span>questions per stage</span>
+          <strong>6</strong>
+          <span>checkpoints</span>
         </div>
         <div class="hero-stat">
-          <strong>15</strong>
-          <span>points total</span>
+          <strong>1</strong>
+          <span>final feast</span>
         </div>
       </div>
     </section>
 
-    <section class="card" id="statusCard">
-      <div class="row between center status-header">
-        <div>
-          <span class="eyebrow">Live status</span>
-          <h2>Team progress</h2>
+    <div class="game-layout">
+      <section class="card status-card" id="statusCard">
+        <div class="row between center status-header">
+          <div>
+            <span class="eyebrow">Live status</span>
+            <h2>Team progress</h2>
+          </div>
+          <span class="status-stage-text" id="progressLabel">Stage 1 of 6</span>
         </div>
-        <span class="status-stage-text" id="progressLabel">Stage 1 of 5</span>
+
+        <div class="progress-wrap" aria-label="Progress through the stages">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="stage-steps" id="stageSteps" aria-hidden="true"></div>
+
+        <div id="statusText">Loading...</div>
+        <div class="pill-row">
+          <span class="pill" id="teamPill">No team yet</span>
+          <span class="pill" id="stagePill">Stage: -</span>
+          <span class="pill" id="scorePill">Score: -</span>
+          <span class="pill" id="timePill">Time: 00:00</span>
+        </div>
+        <button class="debug-reset-btn secondary" id="debugResetBtn" type="button">Debug reset</button>
+      </section>
+
+      <div class="play-panel">
+        <section class="card" id="teamCard">
+          <span class="eyebrow">Checkpoint zero</span>
+          <h2>Start the game!</h2>
+          <p>Enter your team name to begin. Your answers and time will be stored online so the quizmaster can follow the game live.</p>
+          <form id="teamForm">
+            <label>
+              Team name
+              <input id="teamName" maxlength="60" placeholder="e.g. Team LASIGE" required />
+            </label>
+            <button type="submit">Start adventure</button>
+          </form>
+          <p class="hint">One phone per team is recommended.</p>
+        </section>
+
+        <section class="card hidden" id="locationCard">
+          <span class="eyebrow" id="locationEyebrow">Palace Pursuit</span>
+          <h2 id="locationTitle">Checkpoint</h2>
+          <p id="checkpointDescription"></p>
+          <div id="checkpointMediaWrap" class="checkpoint-media-wrap"></div>
+          <div id="mapLinkWrap"></div>
+          <div class="location-box">
+            <p id="locationStatus">Location not checked yet.</p>
+            <button id="checkLocationBtn" type="button">Check my location</button>
+            <button id="debugUnlockBtn" type="button" class="secondary debug-unlock-btn">Debug unlock questions</button>
+          </div>
+          <p class="hint">Allow location access when asked. The next 3 questions unlock when you are within 80 meters of the checkpoint.</p>
+        </section>
+
+        <section class="card hidden" id="quizCard">
+          <span class="eyebrow" id="quizEyebrow">Palace Pursuit</span>
+          <h2 id="quizTitle">Questions</h2>
+          <form id="quizForm"></form>
+        </section>
+
+        <section class="card hidden final-card" id="finalCard">
+          <span class="eyebrow">Mission complete</span>
+          <h2>Finished</h2>
+          <p id="finalMessage"></p>
+        </section>
       </div>
-
-      <div class="progress-wrap" aria-label="Progress through the 5 stages">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
-      <div class="stage-steps" id="stageSteps" aria-hidden="true">
-        <span class="stage-step">1</span>
-        <span class="stage-step">2</span>
-        <span class="stage-step">3</span>
-        <span class="stage-step">4</span>
-        <span class="stage-step">5</span>
-      </div>
-
-      <div id="statusText">Loading…</div>
-      <div class="pill-row">
-        <span class="pill" id="teamPill">No team yet</span>
-        <span class="pill" id="stagePill">Stage: —</span>
-        <span class="pill" id="scorePill">Score: —</span>
-      </div>
-    </section>
-
-    <section class="card" id="teamCard">
-      <span class="eyebrow">Checkpoint zero</span>
-      <h2>Start the game</h2>
-      <p>Enter your team name to begin. Your answers will be stored online so the quizmaster can follow the game live.</p>
-      <form id="teamForm">
-        <label>
-          Team name
-          <input id="teamName" maxlength="60" placeholder="e.g. The Paper Ninjas" required />
-        </label>
-        <button type="submit">Start adventure</button>
-      </form>
-      <p class="hint">One phone per team is recommended.</p>
-    </section>
-
-    <section class="card hidden" id="locationCard">
-      <span class="eyebrow">Next destination</span>
-      <h2>Next checkpoint</h2>
-      <p id="checkpointDescription"></p>
-      <div id="checkpointMediaWrap" class="checkpoint-media-wrap"></div>
-      <div id="mapLinkWrap"></div>
-      <div class="location-box">
-        <p id="locationStatus">Location not checked yet.</p>
-        <button id="checkLocationBtn" type="button">Check my location</button>
-      </div>
-      <p class="hint">Allow location access when asked. The next 3 questions unlock when you are within 50 meters of the checkpoint.</p>
-    </section>
-
-    <section class="card hidden" id="quizCard">
-      <span class="eyebrow">Question round</span>
-      <h2 id="quizTitle">Questions</h2>
-      <form id="quizForm"></form>
-    </section>
-
-    <section class="card hidden final-card" id="finalCard">
-      <span class="eyebrow">Mission complete</span>
-      <h2>Finished</h2>
-      <p id="finalMessage"></p>
-    </section>
+    </div>
   </main>
 </body>
 </html>
