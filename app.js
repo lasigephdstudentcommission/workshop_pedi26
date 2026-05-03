@@ -42,7 +42,6 @@ let finished = false;
 let startedAt = null;
 let elapsedSeconds = 0;
 let timerInterval = null;
-let checkpointRevealPending = false;
 let resultsPollInterval = null;
 let releasedResults = null;
 let fateRevealed = false;
@@ -242,16 +241,6 @@ function renderStatus() {
       step.classList.add('active');
     }
   });
-  if (checkpointRevealPending) {
-    const activeStep = stageStepsWrap.querySelector('.stage-step.active');
-    activeStep?.classList.add('stage-sparkle');
-    progressBar.classList.add('progress-celebrate');
-    setTimeout(() => {
-      activeStep?.classList.remove('stage-sparkle');
-      progressBar.classList.remove('progress-celebrate');
-    }, 900);
-  }
-
   if (!currentTeam) {
     statusText.textContent = 'Choose a team name to begin your checkpoint adventure.';
   } else if (finished) {
@@ -363,31 +352,6 @@ function showFinal() {
   `;
 }
 
-function showUnlockBadge() {
-  const badge = document.createElement('div');
-  badge.className = 'unlock-badge';
-  badge.textContent = 'Checkpoint unlocked';
-  document.body.appendChild(badge);
-  setTimeout(() => badge.remove(), 1500);
-}
-
-function burstButtonStars(button) {
-  if (!button) return;
-  button.classList.add('sparkle-button');
-  for (let i = 0; i < 10; i += 1) {
-    const star = document.createElement('span');
-    star.className = 'button-star';
-    star.textContent = '✦';
-    star.style.setProperty('--star-x', `${Math.cos((Math.PI * 2 * i) / 10) * (34 + (i % 3) * 9)}px`);
-    star.style.setProperty('--star-y', `${Math.sin((Math.PI * 2 * i) / 10) * (22 + (i % 2) * 8)}px`);
-    star.style.left = `${40 + (i % 3) * 10}%`;
-    star.style.top = `${42 + (i % 2) * 12}%`;
-    button.appendChild(star);
-    setTimeout(() => star.remove(), 850);
-  }
-  setTimeout(() => button.classList.remove('sparkle-button'), 850);
-}
-
 function launchMiniConfetti() {
   const confetti = document.createElement('div');
   confetti.className = 'celebration-confetti';
@@ -402,12 +366,6 @@ function launchMiniConfetti() {
   }
   document.body.appendChild(confetti);
   setTimeout(() => confetti.remove(), 1300);
-}
-
-function celebrateCheckpointReveal(button) {
-  burstButtonStars(button);
-  launchMiniConfetti();
-  showUnlockBadge();
 }
 
 function playToneSequence(notes) {
@@ -436,12 +394,17 @@ function playToneSequence(notes) {
 }
 
 function playWinnerSound() {
-  playToneSequence([
-    { frequency: 523.25, start: 0, duration: 0.16, type: 'triangle' },
-    { frequency: 659.25, start: 0.15, duration: 0.16, type: 'triangle' },
-    { frequency: 783.99, start: 0.3, duration: 0.2, type: 'triangle' },
-    { frequency: 1046.5, start: 0.48, duration: 0.42, type: 'sine' }
-  ]);
+  const audio = new Audio('victory.wav');
+  audio.volume = 0.85;
+  audio.play().catch(error => {
+    console.warn('Failed to play victory sound.', error);
+    playToneSequence([
+      { frequency: 523.25, start: 0, duration: 0.16, type: 'triangle' },
+      { frequency: 659.25, start: 0.15, duration: 0.16, type: 'triangle' },
+      { frequency: 783.99, start: 0.3, duration: 0.2, type: 'triangle' },
+      { frequency: 1046.5, start: 0.48, duration: 0.42, type: 'sine' }
+    ]);
+  });
 }
 
 function playLoserSound() {
@@ -532,7 +495,7 @@ function revealFate() {
   fateCard.className = `card fate-card ${isWinner ? 'winner-fate' : 'loser-fate'}`;
   fateCard.innerHTML = isWinner ? `
     <span class="eyebrow">Victory unlocked</span>
-    <h2>The crown is yours!</h2>
+    <h2>Congratulations! The crown is yours.</h2>
     <p class="fate-team">You won, ${escapeHtml(currentTeam)}!</p>
     <div class="fate-score">
       <p>Score: ${teamEntry?.score ?? score}/18</p>
@@ -737,7 +700,6 @@ teamForm.addEventListener('submit', async e => {
 quizForm.addEventListener('submit', async e => {
   e.preventDefault();
   const checkpoint = getCheckpoint(currentStage);
-  const submitButton = quizForm.querySelector('button[type="submit"]');
   const formData = new FormData(quizForm);
   checkpoint.questions.forEach(q => {
     answers[q.id] = String(formData.get(q.id) || '').trim();
@@ -752,8 +714,6 @@ quizForm.addEventListener('submit', async e => {
     timerInterval = null;
   } else {
     currentStage += 1;
-    checkpointRevealPending = true;
-    celebrateCheckpointReveal(submitButton);
   }
 
   await upsertTeamRecord();
@@ -765,12 +725,7 @@ quizForm.addEventListener('submit', async e => {
     quizCard.classList.add('hidden');
     locationCard.classList.add('hidden');
   } else {
-    locationCard.classList.add('checkpoint-reveal');
     locationCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setTimeout(() => {
-      locationCard.classList.remove('checkpoint-reveal');
-      checkpointRevealPending = false;
-    }, 900);
   }
 });
 
