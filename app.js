@@ -39,6 +39,7 @@ let finished = false;
 let startedAt = null;
 let elapsedSeconds = 0;
 let timerInterval = null;
+let checkpointRevealPending = false;
 
 const TEAM_STORAGE_KEY = 'pedipaper_team_name';
 const TEAM_STATE_STORAGE_KEY = 'pedipaper_team_state';
@@ -230,6 +231,15 @@ function renderStatus() {
       step.classList.add('active');
     }
   });
+  if (checkpointRevealPending) {
+    const activeStep = stageStepsWrap.querySelector('.stage-step.active');
+    activeStep?.classList.add('stage-sparkle');
+    progressBar.classList.add('progress-celebrate');
+    setTimeout(() => {
+      activeStep?.classList.remove('stage-sparkle');
+      progressBar.classList.remove('progress-celebrate');
+    }, 900);
+  }
 
   if (!currentTeam) {
     statusText.textContent = 'Choose a team name to begin your checkpoint adventure.';
@@ -340,6 +350,53 @@ function showFinal() {
     <p>Your final score is ${score} out of ${config.checkpoints.length * 3}.</p>
     <p>Final time: ${formatElapsedTime(elapsedSeconds)}.</p>
   `;
+}
+
+function showUnlockBadge() {
+  const badge = document.createElement('div');
+  badge.className = 'unlock-badge';
+  badge.textContent = 'Checkpoint unlocked';
+  document.body.appendChild(badge);
+  setTimeout(() => badge.remove(), 1500);
+}
+
+function burstButtonStars(button) {
+  if (!button) return;
+  button.classList.add('sparkle-button');
+  for (let i = 0; i < 10; i += 1) {
+    const star = document.createElement('span');
+    star.className = 'button-star';
+    star.textContent = '✦';
+    star.style.setProperty('--star-x', `${Math.cos((Math.PI * 2 * i) / 10) * (34 + (i % 3) * 9)}px`);
+    star.style.setProperty('--star-y', `${Math.sin((Math.PI * 2 * i) / 10) * (22 + (i % 2) * 8)}px`);
+    star.style.left = `${40 + (i % 3) * 10}%`;
+    star.style.top = `${42 + (i % 2) * 12}%`;
+    button.appendChild(star);
+    setTimeout(() => star.remove(), 850);
+  }
+  setTimeout(() => button.classList.remove('sparkle-button'), 850);
+}
+
+function launchMiniConfetti() {
+  const confetti = document.createElement('div');
+  confetti.className = 'celebration-confetti';
+  for (let i = 0; i < 18; i += 1) {
+    const piece = document.createElement('span');
+    piece.style.setProperty('--confetti-x', `${(Math.random() - 0.5) * 240}px`);
+    piece.style.setProperty('--confetti-y', `${90 + Math.random() * 90}px`);
+    piece.style.setProperty('--confetti-rotate', `${Math.random() * 360}deg`);
+    piece.style.left = `${45 + Math.random() * 10}%`;
+    piece.style.animationDelay = `${Math.random() * 120}ms`;
+    confetti.appendChild(piece);
+  }
+  document.body.appendChild(confetti);
+  setTimeout(() => confetti.remove(), 1300);
+}
+
+function celebrateCheckpointReveal(button) {
+  burstButtonStars(button);
+  launchMiniConfetti();
+  showUnlockBadge();
 }
 
 function getMissingSchemaColumn(error) {
@@ -504,6 +561,7 @@ teamForm.addEventListener('submit', async e => {
 quizForm.addEventListener('submit', async e => {
   e.preventDefault();
   const checkpoint = getCheckpoint(currentStage);
+  const submitButton = quizForm.querySelector('button[type="submit"]');
   const formData = new FormData(quizForm);
   checkpoint.questions.forEach(q => {
     answers[q.id] = String(formData.get(q.id) || '').trim();
@@ -518,6 +576,8 @@ quizForm.addEventListener('submit', async e => {
     timerInterval = null;
   } else {
     currentStage += 1;
+    checkpointRevealPending = true;
+    celebrateCheckpointReveal(submitButton);
   }
 
   await upsertTeamRecord();
@@ -529,7 +589,12 @@ quizForm.addEventListener('submit', async e => {
     quizCard.classList.add('hidden');
     locationCard.classList.add('hidden');
   } else {
-    alert('Answers submitted. The next checkpoint is now visible. Go there and use the location button to unlock the next questions.');
+    locationCard.classList.add('checkpoint-reveal');
+    locationCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => {
+      locationCard.classList.remove('checkpoint-reveal');
+      checkpointRevealPending = false;
+    }, 900);
   }
 });
 
