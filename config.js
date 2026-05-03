@@ -9,6 +9,7 @@ window.APP_CONFIG = {
       name: 'CP 1 - C6',
       description: 'C6',
       funFact: 'The feast is waiting, but first comes the pursuit! Solve this checkpoint to begin the palace trail.',
+      mapAddress: 'Campo Grande 016, 1749-016 Lisboa',
       lat: 38.755280,
       lng: -9.157573,
       questions: [
@@ -23,6 +24,7 @@ window.APP_CONFIG = {
       description: 'Palacete Pires Mendes',
       funFact: 'A palacete is a small urban palace or mansion. This stop is a good excuse to look at the decorative details that made these houses stand out in Lisbon streets.',
       imageUrl: 'pires_mendes.webp',
+      mapAddress: 'Campo Grande 101, 1700-162 Lisboa',
       lat: 38.7526220,
       lng: -9.151514,
       questions: [
@@ -36,6 +38,8 @@ window.APP_CONFIG = {
       name: 'CP 3 - Jardim da Rotunda de Entrecampos',
       description: 'Jardim da Rotunda de Entrecampos',
       funFact: 'Entrecampos literally points to a place "between fields", a reminder of how this part of Lisbon changed from open edges into a busy urban crossroads.',
+      imageUrl: 'entrecampos.jpg',
+      mapAddress: 'Rotunda de Entrecampos, 1700-157 Lisboa',
       lat: 38.748640,
       lng: -9.148444,
       questions: [
@@ -47,8 +51,10 @@ window.APP_CONFIG = {
     {
       id: 4,
       name: 'CP 4 - Palacio das Vianinhas',
-      description: 'Palacio das Vianinhas.',
-      funFact: 'This checkpoint highlights how Lisbon hides palace-like buildings in everyday routes. Look closely at the facade: these details often tell stories before the plaque does.',
+      description: 'Palácio das Vianinhas',
+      funFact: 'This checkpoint highlights how Lisbon hides palace-like buildings in everyday routes. Look up: the building reveals its history through balconies, tiles, and ornament.',
+      imageUrl: 'vianinhas.jpg',
+      mapAddress: 'Rua de Entrecampos, nº 9, Lisboa',
       lat: 38.744235,
       lng: -9.144962,
       questions: [
@@ -60,8 +66,10 @@ window.APP_CONFIG = {
     {
       id: 5,
       name: 'CP 5 - Estatua Antonio Jose de Almeida',
-      description: 'Estatua Antonio Jose de Almeida',
-      funFact: 'Public statues work like open-air memory markers: they turn a square or avenue into a place where the city remembers people, politics, and public life.',
+      description: 'Estátua António José de Almeida',
+      funFact: 'António José de Almeida was the 6th President of the Republic. Just as he watched Portugal change in his lifetime, his statue now watches the city rush past.',
+      imageUrl: 'estatua.jpg',
+      mapAddress: 'Av. de António José de Almeida, 1000-042 Lisboa',
       lat: 38.739970,
       lng: -9.142523,
       questions: [
@@ -73,8 +81,10 @@ window.APP_CONFIG = {
     {
       id: 6,
       name: "Final CP - Gula's",
-      description: "Gula's",
-      funFact: 'The final stop brings the trail back to people: after the palace hunt, this is where the teams can compare routes, answers, and the stories they noticed along the way.',
+      description: "Gula's for Kitchen Lovers",
+      funFact: 'The palace trail ends here! After chasing palaces across Lisbon, the final stop brings the trail back to the table.',
+      imageUrl: 'gula.avif',
+      mapAddress: 'R. Dona Filipa de Vilhena 18A, 1000-136 Lisboa',
       lat: 38.737295,
       lng: -9.141942,
       questions: [

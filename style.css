@@ -531,6 +531,11 @@ textarea {
   font-style: italic;
 }
 
+.fun-fact-break {
+  display: block;
+  margin-top: 8px;
+}
+
 .answer-options {
   display: grid;
   gap: 10px;
@@ -683,6 +688,14 @@ textarea {
   text-align: center;
   background: #fffaf0;
   border-color: #ffe2a0;
+}
+
+#finalMessage {
+  margin-bottom: 0;
+}
+
+#finalMessage p {
+  margin: 8px 0;
 }
 
 .table-wrap { overflow: auto; }

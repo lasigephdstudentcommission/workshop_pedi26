@@ -41,6 +41,7 @@ let elapsedSeconds = 0;
 let timerInterval = null;
 
 const TEAM_STORAGE_KEY = 'pedipaper_team_name';
+const TEAM_STATE_STORAGE_KEY = 'pedipaper_team_state';
 
 function normalizeAnswer(value = '') {
   return value.trim().toLowerCase();
@@ -56,7 +57,16 @@ function escapeHtml(text = '') {
 }
 
 function renderFunFactText(text = '') {
-  return escapeHtml(text).replace('but first comes the pursuit!', '<span class="fun-fact-emphasis">but first comes the pursuit!</span>');
+  return escapeHtml(text)
+    .replace('but first comes the pursuit!', '<span class="fun-fact-emphasis">but first comes the pursuit!</span>')
+    .replace(
+      'routes. Look up:',
+      'routes.<span class="fun-fact-break"></span>Look up:'
+    )
+    .replace(
+      'Republic. Just as',
+      'Republic.<span class="fun-fact-break"></span>Just as'
+    );
 }
 
 function renderCheckpointMedia(checkpoint) {
@@ -86,12 +96,13 @@ function getCheckpoint(stage) {
   return config.checkpoints[stage - 1] || null;
 }
 
-function getGoogleMapsUrl(lat, lng) {
-  return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+function getGoogleMapsUrl(checkpoint) {
+  const query = checkpoint.mapAddress || `${checkpoint.lat},${checkpoint.lng}`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
 function getMapLinkHtml(checkpoint) {
-  return `<a class="map-link" target="_blank" rel="noopener noreferrer" href="${getGoogleMapsUrl(checkpoint.lat, checkpoint.lng)}">Open checkpoint in Google Maps</a>`;
+  return `<a class="map-link" target="_blank" rel="noopener noreferrer" href="${getGoogleMapsUrl(checkpoint)}">Open checkpoint in Google Maps</a>`;
 }
 
 function formatElapsedTime(totalSeconds = 0) {
@@ -151,11 +162,46 @@ function resetLocalTeamState() {
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = null;
   localStorage.removeItem(TEAM_STORAGE_KEY);
+  localStorage.removeItem(TEAM_STATE_STORAGE_KEY);
   teamCard.classList.remove('hidden');
   locationCard.classList.add('hidden');
   quizCard.classList.add('hidden');
   finalCard.classList.add('hidden');
   teamNameInput.value = '';
+}
+
+function saveLocalTeamState() {
+  if (!currentTeam) return;
+
+  localStorage.setItem(TEAM_STORAGE_KEY, currentTeam);
+  localStorage.setItem(TEAM_STATE_STORAGE_KEY, JSON.stringify({
+    team_name: currentTeam,
+    current_stage: currentStage,
+    answers,
+    score,
+    finished,
+    started_at: startedAt,
+    elapsed_seconds: elapsedSeconds
+  }));
+}
+
+function loadLocalTeamState(teamName) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(TEAM_STATE_STORAGE_KEY) || 'null');
+    if (!saved || saved.team_name !== teamName) return false;
+
+    currentTeam = saved.team_name;
+    currentStage = saved.current_stage || 1;
+    answers = saved.answers || {};
+    score = saved.score || 0;
+    finished = !!saved.finished;
+    startedAt = saved.started_at || new Date().toISOString();
+    elapsedSeconds = saved.elapsed_seconds || 0;
+    return true;
+  } catch (error) {
+    console.warn('Failed to restore local team state.', error);
+    return false;
+  }
 }
 
 function renderStatus() {
@@ -289,7 +335,11 @@ function renderQuestions() {
 
 function showFinal() {
   finalCard.classList.remove('hidden');
-  finalMessage.textContent = `Congratulations ${currentTeam}! Your final score is ${score} out of ${config.checkpoints.length * 3}. Final time: ${formatElapsedTime(elapsedSeconds)}.`;
+  finalMessage.innerHTML = `
+    <p><em>Congratulations ${escapeHtml(currentTeam)}!</em></p>
+    <p>Your final score is ${score} out of ${config.checkpoints.length * 3}.</p>
+    <p>Final time: ${formatElapsedTime(elapsedSeconds)}.</p>
+  `;
 }
 
 function getMissingSchemaColumn(error) {
@@ -310,10 +360,29 @@ async function upsertTeamRecord() {
     updated_at: new Date().toISOString()
   };
 
+  saveLocalTeamState();
+
   const savePayload = { ...payload };
   while (true) {
-    const { error } = await db.from('teams').upsert(savePayload, { onConflict: 'team_name' });
-    if (!error) return;
+    let error = null;
+    let updatedRows = null;
+    try {
+      const updateResult = await db
+        .from('teams')
+        .update(savePayload)
+        .eq('team_name', currentTeam)
+        .select('team_name');
+      error = updateResult.error;
+      updatedRows = updateResult.data || [];
+
+      if (!error && updatedRows.length === 0) {
+        const insertResult = await db.from('teams').insert(savePayload);
+        error = insertResult.error;
+      }
+    } catch (caughtError) {
+      error = caughtError;
+    }
+    if (!error) return true;
 
     const missingColumn = getMissingSchemaColumn(error);
     if (missingColumn && Object.hasOwn(savePayload, missingColumn)) {
@@ -323,8 +392,8 @@ async function upsertTeamRecord() {
     }
 
     console.error(error);
-    alert(`Failed to save your progress online: ${error.message}`);
-    throw error;
+    console.warn(`Online save failed, continuing with local progress only: ${error.message}`);
+    return false;
   }
 }
 
@@ -349,8 +418,11 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
   const { data, error } = await db.from('teams').select('*').eq('team_name', teamName).gte('current_stage', 1).maybeSingle();
   if (error) {
     console.error(error);
-    alert(`Failed to load team: ${error.message}`);
-    return false;
+    const restored = loadLocalTeamState(teamName);
+    if (!restored) {
+      alert(`Failed to load team: ${error.message}`);
+      return false;
+    }
   }
   if (data) {
     currentTeam = data.team_name;
@@ -360,7 +432,7 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
     finished = !!data.finished;
     startedAt = data.started_at || new Date().toISOString();
     elapsedSeconds = data.elapsed_seconds || 0;
-  } else if (createIfMissing) {
+  } else if (!error && createIfMissing) {
     currentTeam = teamName;
     currentStage = 1;
     answers = {};
@@ -369,12 +441,12 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
     startedAt = new Date().toISOString();
     elapsedSeconds = 0;
     await upsertTeamRecord();
-  } else {
+  } else if (!error) {
     resetLocalTeamState();
     renderAll();
     return false;
   }
-  localStorage.setItem(TEAM_STORAGE_KEY, currentTeam);
+  saveLocalTeamState();
   teamCard.classList.add('hidden');
   startTimerTicker();
   renderAll();
