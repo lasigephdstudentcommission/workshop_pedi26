@@ -28,6 +28,7 @@ function escapeHtml(text = '') {
 
 function answersToText(answers) {
   return Object.entries(answers || {})
+    .filter(([key]) => !key.startsWith('_'))
     .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
     .map(([key, value]) => `${key}: ${value}`)
     .join('\n');
@@ -45,10 +46,20 @@ function formatElapsedTime(totalSeconds = 0) {
 }
 
 function getDisplayElapsedSeconds(team) {
-  if (team.finished || !team.started_at) {
-    return team.elapsed_seconds || 0;
+  const storedElapsed = Number(team.elapsed_seconds) || 0;
+  if (storedElapsed > 0) {
+    return storedElapsed;
   }
-  return Math.floor((Date.now() - new Date(team.started_at).getTime()) / 1000);
+  const timer = team.answers?._timer || {};
+  const jsonElapsed = Number(timer.elapsed_seconds) || 0;
+  if (jsonElapsed > 0) {
+    return jsonElapsed;
+  }
+  const started = team.started_at || timer.started_at;
+  if (!started) return 0;
+  const completed = team.completed_at || timer.completed_at;
+  const endTime = completed ? new Date(completed).getTime() : Date.now();
+  return Math.max(0, Math.floor((endTime - new Date(started).getTime()) / 1000));
 }
 
 function sortTeamsForLeaderboard(teams) {
@@ -156,6 +167,7 @@ function exportCsv() {
     'elapsed_seconds',
     'elapsed_time',
     'started_at',
+    'completed_at',
     'updated_at',
     'answers'
   ];
@@ -169,6 +181,7 @@ function exportCsv() {
       elapsed,
       formatElapsedTime(elapsed),
       team.started_at || '',
+      team.completed_at || '',
       team.updated_at,
       JSON.stringify(team.answers || {})
     ];
@@ -243,6 +256,9 @@ async function releaseResults() {
     score: team.score || 0,
     elapsed_seconds: getDisplayElapsedSeconds(team),
     elapsed_time: formatElapsedTime(getDisplayElapsedSeconds(team)),
+    started_at: team.started_at || null,
+    completed_at: team.completed_at || null,
+    timer: team.answers?._timer || null,
     finished: !!team.finished
   }));
   const winner = leaderboard[0];

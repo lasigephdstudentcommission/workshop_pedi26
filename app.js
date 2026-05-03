@@ -40,6 +40,7 @@ let answers = {};
 let score = 0;
 let finished = false;
 let startedAt = null;
+let completedAt = null;
 let elapsedSeconds = 0;
 let timerInterval = null;
 let resultsPollInterval = null;
@@ -99,6 +100,17 @@ function calculateScore(allAnswers) {
   return total;
 }
 
+function getAnswersWithTimerMetadata() {
+  return {
+    ...answers,
+    _timer: {
+      started_at: startedAt,
+      completed_at: completedAt,
+      elapsed_seconds: getCurrentElapsedSeconds()
+    }
+  };
+}
+
 function getCheckpoint(stage) {
   return config.checkpoints[stage - 1] || null;
 }
@@ -110,6 +122,30 @@ function getGoogleMapsUrl(checkpoint) {
 
 function getLeaderboardRank(state, teamName) {
   return (state.leaderboard || []).find(entry => entry.team_name === teamName)?.rank || null;
+}
+
+function getFateElapsedTime(teamEntry) {
+  if (teamEntry?.elapsed_time && teamEntry.elapsed_time !== '00:00') {
+    return teamEntry.elapsed_time;
+  }
+  if (teamEntry?.elapsed_seconds > 0) {
+    return formatElapsedTime(teamEntry.elapsed_seconds);
+  }
+  const saved = currentTeam ? readLocalTeamState(currentTeam) : null;
+  if (saved?.elapsed_seconds > 0) {
+    return formatElapsedTime(saved.elapsed_seconds);
+  }
+  if (saved?.started_at) {
+    const endTime = saved.completed_at ? new Date(saved.completed_at).getTime() : Date.now();
+    const startTime = new Date(saved.started_at).getTime();
+    return formatElapsedTime(Math.max(0, Math.floor((endTime - startTime) / 1000)));
+  }
+  if (startedAt) {
+    const endTime = completedAt ? new Date(completedAt).getTime() : Date.now();
+    const startTime = new Date(startedAt).getTime();
+    return formatElapsedTime(Math.max(0, Math.floor((endTime - startTime) / 1000)));
+  }
+  return formatElapsedTime(elapsedSeconds);
 }
 
 function getMapLinkHtml(checkpoint) {
@@ -128,9 +164,10 @@ function formatElapsedTime(totalSeconds = 0) {
 }
 
 function getCurrentElapsedSeconds() {
+  if (elapsedSeconds > 0 && finished) return elapsedSeconds;
   if (!startedAt) return elapsedSeconds || 0;
-  if (finished) return elapsedSeconds || 0;
-  return Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000);
+  const endTime = finished && completedAt ? new Date(completedAt).getTime() : Date.now();
+  return Math.max(0, Math.floor((endTime - new Date(startedAt).getTime()) / 1000));
 }
 
 function renderTimer() {
@@ -169,6 +206,7 @@ function resetLocalTeamState() {
   score = 0;
   finished = false;
   startedAt = null;
+  completedAt = null;
   elapsedSeconds = 0;
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = null;
@@ -192,14 +230,26 @@ function saveLocalTeamState() {
     score,
     finished,
     started_at: startedAt,
+    completed_at: completedAt,
     elapsed_seconds: elapsedSeconds
   }));
 }
 
-function loadLocalTeamState(teamName) {
+function readLocalTeamState(teamName) {
   try {
     const saved = JSON.parse(localStorage.getItem(TEAM_STATE_STORAGE_KEY) || 'null');
-    if (!saved || saved.team_name !== teamName) return false;
+    if (!saved || saved.team_name !== teamName) return null;
+    return saved;
+  } catch (error) {
+    console.warn('Failed to read local team state.', error);
+    return null;
+  }
+}
+
+function loadLocalTeamState(teamName) {
+  try {
+    const saved = readLocalTeamState(teamName);
+    if (!saved) return false;
 
     currentTeam = saved.team_name;
     currentStage = saved.current_stage || 1;
@@ -207,6 +257,7 @@ function loadLocalTeamState(teamName) {
     score = saved.score || 0;
     finished = !!saved.finished;
     startedAt = saved.started_at || new Date().toISOString();
+    completedAt = saved.completed_at || null;
     elapsedSeconds = saved.elapsed_seconds || 0;
     return true;
   } catch (error) {
@@ -480,6 +531,7 @@ function revealFate() {
   const isWinner = releasedResults.winner_team === currentTeam;
   const rank = getLeaderboardRank(releasedResults, currentTeam);
   const teamEntry = (releasedResults.leaderboard || []).find(entry => entry.team_name === currentTeam);
+  const displayElapsedTime = getFateElapsedTime(teamEntry);
   document.body.classList.toggle('loser-mode', !isWinner);
   document.body.classList.toggle('winner-mode', isWinner);
 
@@ -499,7 +551,7 @@ function revealFate() {
     <p class="fate-team">You won, ${escapeHtml(currentTeam)}!</p>
     <div class="fate-score">
       <p>Score: ${teamEntry?.score ?? score}/18</p>
-      <p>Time: ${escapeHtml(teamEntry?.elapsed_time || formatElapsedTime(elapsedSeconds))}</p>
+      <p>Time: ${escapeHtml(displayElapsedTime)}</p>
     </div>
   ` : `
     <span class="eyebrow">The palace has spoken</span>
@@ -509,7 +561,7 @@ function revealFate() {
     <div class="fate-score">
       ${rank ? `<p>Your rank: #${rank}</p>` : ''}
       <p>Score: ${teamEntry?.score ?? score}/18</p>
-      <p>Time: ${escapeHtml(teamEntry?.elapsed_time || formatElapsedTime(elapsedSeconds))}</p>
+      <p>Time: ${escapeHtml(displayElapsedTime)}</p>
     </div>
   `;
 }
@@ -547,10 +599,11 @@ async function upsertTeamRecord() {
   const payload = {
     team_name: currentTeam,
     current_stage: currentStage,
-    answers,
+    answers: getAnswersWithTimerMetadata(),
     score,
     finished,
     started_at: startedAt,
+    completed_at: completedAt,
     elapsed_seconds: elapsedSeconds,
     updated_at: new Date().toISOString()
   };
@@ -620,13 +673,17 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
     }
   }
   if (data) {
+    const saved = readLocalTeamState(data.team_name);
+    const onlineElapsed = Number(data.elapsed_seconds) || 0;
+    const localElapsed = Number(saved?.elapsed_seconds) || 0;
     currentTeam = data.team_name;
-    currentStage = data.current_stage || 1;
-    answers = data.answers || {};
-    score = data.score || 0;
+    currentStage = data.current_stage || saved?.current_stage || 1;
+    answers = Object.keys(data.answers || {}).length ? data.answers : (saved?.answers || {});
+    score = Math.max(Number(data.score) || 0, Number(saved?.score) || 0);
     finished = !!data.finished;
-    startedAt = data.started_at || new Date().toISOString();
-    elapsedSeconds = data.elapsed_seconds || 0;
+    startedAt = data.started_at || saved?.started_at || new Date().toISOString();
+    completedAt = data.completed_at || saved?.completed_at || null;
+    elapsedSeconds = Math.max(onlineElapsed, localElapsed);
   } else if (!error && createIfMissing) {
     currentTeam = teamName;
     currentStage = 1;
@@ -634,6 +691,7 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
     score = 0;
     finished = false;
     startedAt = new Date().toISOString();
+    completedAt = null;
     elapsedSeconds = 0;
     await upsertTeamRecord();
   } else if (!error) {
@@ -708,8 +766,10 @@ quizForm.addEventListener('submit', async e => {
   score = calculateScore(answers);
 
   if (currentStage >= config.checkpoints.length) {
+    completedAt = new Date().toISOString();
     elapsedSeconds = getCurrentElapsedSeconds();
     finished = true;
+    saveLocalTeamState();
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = null;
   } else {
