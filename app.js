@@ -12,6 +12,9 @@ const quizEyebrow = document.getElementById('quizEyebrow');
 const quizTitle = document.getElementById('quizTitle');
 const finalCard = document.getElementById('finalCard');
 const finalMessage = document.getElementById('finalMessage');
+const heroCard = document.querySelector('.hero-card');
+const gameLayout = document.querySelector('.game-layout');
+const fateCard = document.getElementById('fateCard');
 const statusText = document.getElementById('statusText');
 const teamPill = document.getElementById('teamPill');
 const stagePill = document.getElementById('stagePill');
@@ -40,9 +43,13 @@ let startedAt = null;
 let elapsedSeconds = 0;
 let timerInterval = null;
 let checkpointRevealPending = false;
+let resultsPollInterval = null;
+let releasedResults = null;
+let fateRevealed = false;
 
 const TEAM_STORAGE_KEY = 'pedipaper_team_name';
 const TEAM_STATE_STORAGE_KEY = 'pedipaper_team_state';
+const GAME_STATE_TEAM = '__game_state__';
 
 function normalizeAnswer(value = '') {
   return value.trim().toLowerCase();
@@ -100,6 +107,10 @@ function getCheckpoint(stage) {
 function getGoogleMapsUrl(checkpoint) {
   const query = checkpoint.mapAddress || `${checkpoint.lat},${checkpoint.lng}`;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
+function getLeaderboardRank(state, teamName) {
+  return (state.leaderboard || []).find(entry => entry.team_name === teamName)?.rank || null;
 }
 
 function getMapLinkHtml(checkpoint) {
@@ -399,6 +410,116 @@ function celebrateCheckpointReveal(button) {
   showUnlockBadge();
 }
 
+function playToneSequence(notes) {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+  const audio = new AudioContext();
+  const master = audio.createGain();
+  master.gain.setValueAtTime(0.001, audio.currentTime);
+  master.gain.exponentialRampToValueAtTime(0.18, audio.currentTime + 0.02);
+  master.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 1.45);
+  master.connect(audio.destination);
+
+  notes.forEach(({ frequency, start, duration, type = 'sine' }) => {
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, audio.currentTime + start);
+    gain.gain.setValueAtTime(0.001, audio.currentTime + start);
+    gain.gain.exponentialRampToValueAtTime(0.9, audio.currentTime + start + 0.025);
+    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + start + duration);
+    oscillator.connect(gain);
+    gain.connect(master);
+    oscillator.start(audio.currentTime + start);
+    oscillator.stop(audio.currentTime + start + duration + 0.04);
+  });
+}
+
+function playWinnerSound() {
+  playToneSequence([
+    { frequency: 523.25, start: 0, duration: 0.16, type: 'triangle' },
+    { frequency: 659.25, start: 0.15, duration: 0.16, type: 'triangle' },
+    { frequency: 783.99, start: 0.3, duration: 0.2, type: 'triangle' },
+    { frequency: 1046.5, start: 0.48, duration: 0.42, type: 'sine' }
+  ]);
+}
+
+function playLoserSound() {
+  playToneSequence([
+    { frequency: 220, start: 0, duration: 0.32, type: 'sawtooth' },
+    { frequency: 185, start: 0.34, duration: 0.32, type: 'sawtooth' },
+    { frequency: 146.83, start: 0.68, duration: 0.46, type: 'sawtooth' }
+  ]);
+}
+
+function showFatePrompt(state) {
+  if (!currentTeam || fateRevealed) return;
+  releasedResults = state;
+  heroCard?.classList.add('hidden');
+  gameLayout?.classList.add('hidden');
+  fateCard.className = 'card fate-card fate-prompt';
+  fateCard.innerHTML = `
+    <span class="eyebrow">Results released</span>
+    <h2>The palace has decided.</h2>
+    <p>Ready?</p>
+    <button id="showFateBtn" type="button">Show my fate</button>
+  `;
+  document.getElementById('showFateBtn').addEventListener('click', revealFate);
+}
+
+function revealFate() {
+  if (!releasedResults || !currentTeam) return;
+  fateRevealed = true;
+  const isWinner = releasedResults.winner_team === currentTeam;
+  const rank = getLeaderboardRank(releasedResults, currentTeam);
+  const teamEntry = (releasedResults.leaderboard || []).find(entry => entry.team_name === currentTeam);
+
+  if (isWinner) {
+    playWinnerSound();
+    launchMiniConfetti();
+  } else {
+    playLoserSound();
+  }
+
+  fateCard.className = `card fate-card ${isWinner ? 'winner-fate' : 'loser-fate'}`;
+  fateCard.innerHTML = isWinner ? `
+    <span class="eyebrow">Victory unlocked</span>
+    <h2>The crown is yours!</h2>
+    <p class="fate-team">${escapeHtml(currentTeam)}</p>
+    <p>You won the Palace Pursuit.</p>
+    <p class="fate-score">Score: ${teamEntry?.score ?? score}/18 · Time: ${escapeHtml(teamEntry?.elapsed_time || formatElapsedTime(elapsedSeconds))}</p>
+  ` : `
+    <span class="eyebrow">The palace has spoken</span>
+    <h2 class="womp-title">WOMP WOMP WOMP</h2>
+    <p class="fate-team">${escapeHtml(currentTeam)}</p>
+    <p>The crown went to <strong>${escapeHtml(releasedResults.winner_team)}</strong>.</p>
+    <p class="fate-score">${rank ? `Your rank: #${rank}. ` : ''}Score: ${teamEntry?.score ?? score}/18 · Time: ${escapeHtml(teamEntry?.elapsed_time || formatElapsedTime(elapsedSeconds))}</p>
+  `;
+}
+
+async function checkReleasedResults() {
+  if (!currentTeam || fateRevealed) return;
+  const { data, error } = await db
+    .from('teams')
+    .select('answers')
+    .eq('team_name', GAME_STATE_TEAM)
+    .maybeSingle();
+  if (error) {
+    console.warn('Failed to check released results.', error);
+    return;
+  }
+  const state = data?.answers;
+  if (state?.results_released) {
+    showFatePrompt(state);
+  }
+}
+
+function startResultsPolling() {
+  if (resultsPollInterval) return;
+  checkReleasedResults();
+  resultsPollInterval = setInterval(checkReleasedResults, 4000);
+}
+
 function getMissingSchemaColumn(error) {
   const match = String(error?.message || '').match(/Could not find the '([^']+)' column/);
   return match ? match[1] : null;
@@ -506,6 +627,7 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
   saveLocalTeamState();
   teamCard.classList.add('hidden');
   startTimerTicker();
+  startResultsPolling();
   renderAll();
   if (finished) showFinal();
   return true;
@@ -630,6 +752,11 @@ debugResetBtn.addEventListener('click', async () => {
   }
 
   resetLocalTeamState();
+  fateRevealed = false;
+  releasedResults = null;
+  fateCard.classList.add('hidden');
+  heroCard?.classList.remove('hidden');
+  gameLayout?.classList.remove('hidden');
   renderAll();
   debugResetBtn.disabled = false;
   debugResetBtn.textContent = originalLabel;

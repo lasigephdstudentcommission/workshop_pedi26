@@ -10,10 +10,12 @@ const tbody = document.querySelector('#teamsTable tbody');
 const dashboardMeta = document.getElementById('dashboardMeta');
 const refreshBtn = document.getElementById('refreshBtn');
 const exportBtn = document.getElementById('exportBtn');
+const showResultsBtn = document.getElementById('showResultsBtn');
 const resetBtn = document.getElementById('resetBtn');
 
 let authorized = false;
 let lastTeams = [];
+const GAME_STATE_TEAM = '__game_state__';
 
 function escapeHtml(text = '') {
   return String(text)
@@ -71,6 +73,51 @@ async function archiveActiveTeams(payload) {
     if (missingColumn && Object.hasOwn(updatePayload, missingColumn)) {
       console.warn(`Retrying reset without missing database column: ${missingColumn}`);
       delete updatePayload[missingColumn];
+      continue;
+    }
+
+    return error;
+  }
+}
+
+async function saveGameState(state) {
+  const payload = {
+    team_name: GAME_STATE_TEAM,
+    current_stage: 0,
+    answers: state,
+    score: 0,
+    finished: true,
+    elapsed_seconds: 0,
+    updated_at: new Date().toISOString()
+  };
+  const savePayload = { ...payload };
+
+  while (true) {
+    let error = null;
+    let updatedRows = null;
+    try {
+      const updateResult = await db
+        .from('teams')
+        .update(savePayload)
+        .eq('team_name', GAME_STATE_TEAM)
+        .select('team_name');
+      error = updateResult.error;
+      updatedRows = updateResult.data || [];
+
+      if (!error && updatedRows.length === 0) {
+        const insertResult = await db.from('teams').insert(savePayload);
+        error = insertResult.error;
+      }
+    } catch (caughtError) {
+      error = caughtError;
+    }
+
+    if (!error) return null;
+
+    const missingColumn = getMissingSchemaColumn(error);
+    if (missingColumn && Object.hasOwn(savePayload, missingColumn)) {
+      console.warn(`Retrying game state save without missing database column: ${missingColumn}`);
+      delete savePayload[missingColumn];
       continue;
     }
 
@@ -159,12 +206,18 @@ async function resetGame() {
     elapsed_seconds: 0,
     updated_at: new Date().toISOString()
   });
+  const stateError = await saveGameState({
+    results_released: false,
+    released_at: null,
+    winner_team: null,
+    leaderboard: []
+  });
 
   resetBtn.disabled = false;
   resetBtn.textContent = originalLabel;
 
-  if (error) {
-    alert(`Failed to reset game: ${error.message}`);
+  if (error || stateError) {
+    alert(`Failed to reset game: ${(error || stateError).message}`);
     return;
   }
 
@@ -172,6 +225,54 @@ async function resetGame() {
   tbody.innerHTML = '';
   dashboardMeta.textContent = '0 team(s) loaded.';
   alert('Game reset complete. All teams, answers, scores, and times were cleared.');
+}
+
+async function releaseResults() {
+  if (!authorized) return;
+  if (!lastTeams.length) {
+    await loadTeams();
+  }
+  if (!lastTeams.length) {
+    alert('No teams to release yet.');
+    return;
+  }
+
+  const leaderboard = sortTeamsForLeaderboard(lastTeams).map((team, index) => ({
+    rank: index + 1,
+    team_name: team.team_name,
+    score: team.score || 0,
+    elapsed_seconds: getDisplayElapsedSeconds(team),
+    elapsed_time: formatElapsedTime(getDisplayElapsedSeconds(team)),
+    finished: !!team.finished
+  }));
+  const winner = leaderboard[0];
+
+  const confirmed = window.confirm(`Release results now? Winner: ${winner.team_name}`);
+  if (!confirmed) return;
+
+  showResultsBtn.disabled = true;
+  const originalLabel = showResultsBtn.textContent;
+  showResultsBtn.textContent = 'Releasing...';
+
+  const error = await saveGameState({
+    results_released: true,
+    released_at: new Date().toISOString(),
+    winner_team: winner.team_name,
+    winner_score: winner.score,
+    winner_elapsed_seconds: winner.elapsed_seconds,
+    winner_elapsed_time: winner.elapsed_time,
+    leaderboard
+  });
+
+  showResultsBtn.disabled = false;
+  showResultsBtn.textContent = originalLabel;
+
+  if (error) {
+    alert(`Failed to release results: ${error.message}`);
+    return;
+  }
+
+  alert('Results released. Teams can now press Show my fate.');
 }
 
 passwordForm.addEventListener('submit', async e => {
@@ -188,4 +289,5 @@ passwordForm.addEventListener('submit', async e => {
 
 refreshBtn.addEventListener('click', () => authorized && loadTeams());
 exportBtn.addEventListener('click', exportCsv);
+showResultsBtn.addEventListener('click', releaseResults);
 resetBtn.addEventListener('click', resetGame);
