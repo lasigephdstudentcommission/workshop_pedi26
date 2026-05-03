@@ -380,15 +380,11 @@ textarea {
 }
 
 .game-layout {
-  display: grid;
-  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.35fr);
-  gap: 16px;
-  align-items: start;
+  display: block;
 }
 
 .status-card {
-  position: sticky;
-  top: 118px;
+  position: static;
 }
 
 .play-panel {

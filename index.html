@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Palace Pursuit: LASIGE Edition</title>
   <link rel="icon" type="image/png" href="lasige_icon.png" />
-  <link rel="stylesheet" href="style.css?v=20260503-final-message" />
+  <link rel="stylesheet" href="style.css?v=20260503-team-first" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js?v=20260503-map-addresses"></script>
   <script defer src="app.js?v=20260503-save-update-insert"></script>
@@ -47,30 +47,6 @@
     </section>
 
     <div class="game-layout">
-      <section class="card status-card" id="statusCard">
-        <div class="row between center status-header">
-          <div>
-            <span class="eyebrow">Live status</span>
-            <h2>Team progress</h2>
-          </div>
-          <span class="status-stage-text" id="progressLabel">Stage 1 of 6</span>
-        </div>
-
-        <div class="progress-wrap" aria-label="Progress through the stages">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <div class="stage-steps" id="stageSteps" aria-hidden="true"></div>
-
-        <div id="statusText">Loading...</div>
-        <div class="pill-row">
-          <span class="pill" id="teamPill">No team yet</span>
-          <span class="pill" id="stagePill">Stage: -</span>
-          <span class="pill" id="scorePill">Score: -</span>
-          <span class="pill" id="timePill">Time: 00:00</span>
-        </div>
-        <button class="debug-reset-btn secondary" id="debugResetBtn" type="button">Debug reset</button>
-      </section>
-
       <div class="play-panel">
         <section class="card" id="teamCard">
           <span class="eyebrow">Checkpoint zero</span>
@@ -84,6 +60,30 @@
             <button type="submit">Start adventure</button>
           </form>
           <p class="hint">One phone per team is recommended.</p>
+        </section>
+
+        <section class="card status-card" id="statusCard">
+          <div class="row between center status-header">
+            <div>
+              <span class="eyebrow">Live status</span>
+              <h2>Team progress</h2>
+            </div>
+            <span class="status-stage-text" id="progressLabel">Stage 1 of 6</span>
+          </div>
+
+          <div class="progress-wrap" aria-label="Progress through the stages">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="stage-steps" id="stageSteps" aria-hidden="true"></div>
+
+          <div id="statusText">Loading...</div>
+          <div class="pill-row">
+            <span class="pill" id="teamPill">No team yet</span>
+            <span class="pill" id="stagePill">Stage: -</span>
+            <span class="pill" id="scorePill">Score: -</span>
+            <span class="pill" id="timePill">Time: 00:00</span>
+          </div>
+          <button class="debug-reset-btn secondary" id="debugResetBtn" type="button">Debug reset</button>
         </section>
 
         <section class="card hidden" id="locationCard">
