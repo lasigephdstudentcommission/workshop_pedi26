@@ -1,6 +1,6 @@
-# Workshop PediPaper GO
+# 11th LASIGE Workshop
 
-A GitHub Pages friendly web app for a location-based team quiz. Teams use one phone, choose a team name, answer 18 questions in 6 batches of 3, and unlock the next batch only when they reach the next checkpoint area.
+A location-based team quiz. Teams use one phone, choose a team name, answer 18 questions in 6 batches of 3, and unlock the next batch only when they reach the next checkpoint area.
 
 ## What this project does
 
