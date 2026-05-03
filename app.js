@@ -445,23 +445,67 @@ function playWinnerSound() {
 }
 
 function playLoserSound() {
-  playToneSequence([
-    { frequency: 220, start: 0, duration: 0.32, type: 'sawtooth' },
-    { frequency: 185, start: 0.34, duration: 0.32, type: 'sawtooth' },
-    { frequency: 146.83, start: 0.68, duration: 0.46, type: 'sawtooth' }
-  ]);
+  const audio = new Audio('womp_womp.wav');
+  audio.volume = 0.85;
+  audio.play().catch(error => {
+    console.warn('Failed to play losing sound.', error);
+  });
+}
+
+function launchFailRain() {
+  const rain = document.createElement('div');
+  rain.className = 'fail-rain';
+  for (let i = 0; i < 26; i += 1) {
+    const image = document.createElement('img');
+    image.src = 'fail.png';
+    image.alt = '';
+    image.style.left = `${Math.random() * 100}%`;
+    image.style.setProperty('--fail-size', `${38 + Math.random() * 58}px`);
+    image.style.setProperty('--fail-x', `${(Math.random() - 0.5) * 180}px`);
+    image.style.setProperty('--fail-rotate', `${(Math.random() - 0.5) * 260}deg`);
+    image.style.animationDelay = `${Math.random() * 900}ms`;
+    image.style.animationDuration = `${2.4 + Math.random() * 1.6}s`;
+    rain.appendChild(image);
+  }
+  document.body.appendChild(rain);
+  setTimeout(() => rain.remove(), 5200);
+}
+
+function launchCrownRain() {
+  const rain = document.createElement('div');
+  rain.className = 'crown-rain';
+  for (let i = 0; i < 28; i += 1) {
+    const image = document.createElement('img');
+    image.src = 'crown.png';
+    image.alt = '';
+    image.style.left = `${Math.random() * 100}%`;
+    image.style.setProperty('--crown-size', `${32 + Math.random() * 54}px`);
+    image.style.setProperty('--crown-x', `${(Math.random() - 0.5) * 170}px`);
+    image.style.setProperty('--crown-rotate', `${(Math.random() - 0.5) * 220}deg`);
+    image.style.animationDelay = `${Math.random() * 850}ms`;
+    image.style.animationDuration = `${2.3 + Math.random() * 1.7}s`;
+    rain.appendChild(image);
+  }
+  document.body.appendChild(rain);
+  setTimeout(() => rain.remove(), 5200);
 }
 
 function showFatePrompt(state) {
   if (!currentTeam || fateRevealed) return;
   releasedResults = state;
+  document.body.classList.add('fate-mode');
   heroCard?.classList.add('hidden');
   gameLayout?.classList.add('hidden');
+  teamCard.classList.add('hidden');
+  statusText.closest('.card')?.classList.add('hidden');
+  locationCard.classList.add('hidden');
+  quizCard.classList.add('hidden');
+  finalCard.classList.add('hidden');
   fateCard.className = 'card fate-card fate-prompt';
   fateCard.innerHTML = `
-    <span class="eyebrow">Results released</span>
-    <h2>The palace has decided.</h2>
-    <p>Ready?</p>
+    <span class="eyebrow">Final results</span>
+    <h2>The palace trail is complete: <em>the crown awaits.</em></h2>
+    <p>Are you ready?</p>
     <button id="showFateBtn" type="button">Show my fate</button>
   `;
   document.getElementById('showFateBtn').addEventListener('click', revealFate);
@@ -473,27 +517,37 @@ function revealFate() {
   const isWinner = releasedResults.winner_team === currentTeam;
   const rank = getLeaderboardRank(releasedResults, currentTeam);
   const teamEntry = (releasedResults.leaderboard || []).find(entry => entry.team_name === currentTeam);
+  document.body.classList.toggle('loser-mode', !isWinner);
+  document.body.classList.toggle('winner-mode', isWinner);
 
   if (isWinner) {
     playWinnerSound();
     launchMiniConfetti();
+    launchCrownRain();
   } else {
     playLoserSound();
+    launchFailRain();
   }
 
   fateCard.className = `card fate-card ${isWinner ? 'winner-fate' : 'loser-fate'}`;
   fateCard.innerHTML = isWinner ? `
     <span class="eyebrow">Victory unlocked</span>
     <h2>The crown is yours!</h2>
-    <p class="fate-team">${escapeHtml(currentTeam)}</p>
-    <p>You won the Palace Pursuit.</p>
-    <p class="fate-score">Score: ${teamEntry?.score ?? score}/18 · Time: ${escapeHtml(teamEntry?.elapsed_time || formatElapsedTime(elapsedSeconds))}</p>
+    <p class="fate-team">You won, ${escapeHtml(currentTeam)}!</p>
+    <div class="fate-score">
+      <p>Score: ${teamEntry?.score ?? score}/18</p>
+      <p>Time: ${escapeHtml(teamEntry?.elapsed_time || formatElapsedTime(elapsedSeconds))}</p>
+    </div>
   ` : `
     <span class="eyebrow">The palace has spoken</span>
-    <h2 class="womp-title">WOMP WOMP WOMP</h2>
-    <p class="fate-team">${escapeHtml(currentTeam)}</p>
+    <h2 class="womp-title">You have been defeated.</h2>
+    <p class="fate-team">You lost, ${escapeHtml(currentTeam)}!</p>
     <p>The crown went to <strong>${escapeHtml(releasedResults.winner_team)}</strong>.</p>
-    <p class="fate-score">${rank ? `Your rank: #${rank}. ` : ''}Score: ${teamEntry?.score ?? score}/18 · Time: ${escapeHtml(teamEntry?.elapsed_time || formatElapsedTime(elapsedSeconds))}</p>
+    <div class="fate-score">
+      ${rank ? `<p>Your rank: #${rank}</p>` : ''}
+      <p>Score: ${teamEntry?.score ?? score}/18</p>
+      <p>Time: ${escapeHtml(teamEntry?.elapsed_time || formatElapsedTime(elapsedSeconds))}</p>
+    </div>
   `;
 }
 
@@ -754,6 +808,8 @@ debugResetBtn.addEventListener('click', async () => {
   resetLocalTeamState();
   fateRevealed = false;
   releasedResults = null;
+  document.body.classList.remove('fate-mode');
+  document.body.classList.remove('loser-mode', 'winner-mode');
   fateCard.classList.add('hidden');
   heroCard?.classList.remove('hidden');
   gameLayout?.classList.remove('hidden');

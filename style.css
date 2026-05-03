@@ -738,6 +738,42 @@ textarea {
   background: var(--magenta);
 }
 
+.fail-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fail-rain img {
+  position: absolute;
+  top: -120px;
+  width: var(--fail-size);
+  height: auto;
+  opacity: 0;
+  filter: drop-shadow(0 10px 14px rgba(52, 54, 52, 0.24));
+  animation: failFall 3s linear forwards;
+}
+
+.crown-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.crown-rain img {
+  position: absolute;
+  top: -110px;
+  width: var(--crown-size);
+  height: auto;
+  opacity: 0;
+  filter: drop-shadow(0 10px 16px rgba(122, 81, 0, 0.25));
+  animation: crownFall 3s linear forwards;
+}
+
 .unlock-badge {
   position: fixed;
   left: 50%;
@@ -850,14 +886,24 @@ textarea {
   overflow: hidden;
 }
 
+.fate-mode .hero-card,
+.fate-mode .game-layout,
+.fate-mode #teamCard,
+.fate-mode #statusCard,
+.fate-mode #locationCard,
+.fate-mode #quizCard,
+.fate-mode #finalCard {
+  display: none !important;
+}
+
 .fate-card h2 {
-  font-size: clamp(2.1rem, 8vw, 4.6rem);
-  line-height: 1;
+  font-size: clamp(2rem, 6vw, 3.45rem);
+  line-height: 1.06;
   margin-bottom: 16px;
 }
 
 .fate-card p {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   line-height: 1.45;
 }
 
@@ -898,9 +944,27 @@ textarea {
 }
 
 .womp-title {
-  color: #343634;
+  color: #8a2f00;
   letter-spacing: 0;
   animation: wompBounce 1.1s ease infinite;
+}
+
+body.loser-mode {
+  background:
+    radial-gradient(circle at 15% 18%, rgba(207, 211, 212, 0.34), transparent 30%),
+    radial-gradient(circle at 82% 78%, rgba(207, 211, 212, 0.34), transparent 30%),
+    linear-gradient(180deg, #f7f8f7 0%, #ecefed 58%, #ffffff 100%);
+}
+
+body.loser-mode::before,
+body.loser-mode::after,
+body.loser-mode .page-glow {
+  background: #cfd3d4;
+  opacity: 0.2;
+}
+
+.loser-fate .eyebrow {
+  color: #7a8080;
 }
 
 .fate-team {
@@ -918,6 +982,10 @@ textarea {
 .fate-score {
   color: var(--muted);
   font-weight: 700;
+}
+
+.fate-score p {
+  margin: 4px 0;
 }
 
 @keyframes winnerPulse {
@@ -964,6 +1032,34 @@ textarea {
   }
   50% {
     transform: translateY(5px) scale(0.985);
+  }
+}
+
+@keyframes failFall {
+  0% {
+    opacity: 0;
+    transform: translate(0, -80px) rotate(0deg) scale(0.92);
+  }
+  10% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--fail-x), calc(100vh + 180px)) rotate(var(--fail-rotate)) scale(1.08);
+  }
+}
+
+@keyframes crownFall {
+  0% {
+    opacity: 0;
+    transform: translate(0, -70px) rotate(0deg) scale(0.9);
+  }
+  10% {
+    opacity: 0.96;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--crown-x), calc(100vh + 170px)) rotate(var(--crown-rotate)) scale(1.08);
   }
 }
 
