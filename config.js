@@ -8,7 +8,7 @@ window.APP_CONFIG = {
       id: 1,
       name: 'CP 1 - C6',
       description: 'C6',
-      funFact: 'The feast is waiting, but first comes the pursuit! Solve this checkpoint to begin the palace trail.',
+      funFact: "The feast is waiting, but first comes the pursuit! Solve this checkpoint's questions to begin the palace trail.",
       mapAddress: 'Campo Grande 016, 1749-016 Lisboa',
       lat: 38.755280,
       lng: -9.157573,
@@ -22,7 +22,7 @@ window.APP_CONFIG = {
       id: 2,
       name: 'CP 2 - Palacete Pires Mendes',
       description: 'Palacete Pires Mendes',
-      funFact: 'A palacete is a small urban palace or mansion. This stop is a good excuse to look at the decorative details that made these houses stand out in Lisbon streets.',
+      funFact: 'An ecletic-meets-art nouveau palace, .',
       imageUrl: 'pires_mendes.webp',
       mapAddress: 'Campo Grande 101, 1700-162 Lisboa',
       lat: 38.7526220,
@@ -37,7 +37,7 @@ window.APP_CONFIG = {
       id: 3,
       name: 'CP 3 - Jardim da Rotunda de Entrecampos',
       description: 'Jardim da Rotunda de Entrecampos',
-      funFact: 'Entrecampos literally points to a place "between fields", a reminder of how this part of Lisbon changed from open edges into a busy urban crossroads.',
+      funFact: "In its center is the Monument to the People and Heroes of the Peninsular War, commemorating resistance to Napoleon’s invasions. But interestingly, while it was built in 1908 during Manuel II's reign, it was only inaugurated in 1933, during the First Republic.",
       imageUrl: 'entrecampos.jpg',
       mapAddress: 'Rotunda de Entrecampos, 1700-157 Lisboa',
       lat: 38.748640,
@@ -52,7 +52,7 @@ window.APP_CONFIG = {
       id: 4,
       name: 'CP 4 - Palacio das Vianinhas',
       description: 'Palácio das Vianinhas',
-      funFact: 'This checkpoint highlights how Lisbon hides palace-like buildings in everyday routes. Look up: the building reveals its history through balconies, tiles, and ornament.',
+      funFact: 'Originally a banker’s suburban palace, became a Franciscan children’s and nursing institution, and now the headquarters of the national Misericórdia organization — while the old Entrecampos around it was completely transformed.',
       imageUrl: 'vianinhas.jpg',
       mapAddress: 'Rua de Entrecampos, nº 9, Lisboa',
       lat: 38.744235,
@@ -67,7 +67,7 @@ window.APP_CONFIG = {
       id: 5,
       name: 'CP 5 - Estatua Antonio Jose de Almeida',
       description: 'Estátua António José de Almeida',
-      funFact: 'António José de Almeida was the 6th President of the Republic. Just as he watched Portugal change in his lifetime, his statue now watches the city rush past.',
+      funFact: 'António José de Almeida, known as the Republic’s greatest orator, was the 6th President of the First Portuguese Republic and the only one to complete the full four-year term.',
       imageUrl: 'estatua.jpg',
       mapAddress: 'Av. de António José de Almeida, 1000-042 Lisboa',
       lat: 38.739970,
@@ -82,7 +82,7 @@ window.APP_CONFIG = {
       id: 6,
       name: "Final CP - Gula's",
       description: "Gula's for Kitchen Lovers",
-      funFact: 'The palace trail ends here! After chasing palaces across Lisbon, the final stop brings the trail back to the table.',
+      funFact: 'The palace trail ends here! After chasing monuments across Lisbon, the final stop brings the trail back to the table. But before that... ',
       imageUrl: 'gula.avif',
       mapAddress: 'R. Dona Filipa de Vilhena 18A, 1000-136 Lisboa',
       lat: 38.737295,
@@ -90,7 +90,7 @@ window.APP_CONFIG = {
       questions: [
         { id: 'q16', text: 'Final CP question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
         { id: 'q17', text: 'Final CP question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q18', text: 'Final CP question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
+        { id: 'q18', text: 'How many diplomas were given today?', type: 'multiple-choice', options: ['42', '35', '62', '53'], correctAnswer: '62' }
       ]
     }
   ]
