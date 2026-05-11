@@ -37,7 +37,7 @@ window.APP_CONFIG = {
       id: 3,
       name: 'CP 3 - Jardim da Rotunda de Entrecampos',
       description: 'Jardim da Rotunda de Entrecampos',
-      funFact: "In its center is the Monument to the People and Heroes of the Peninsular War, commemorating resistance to Napoleon’s invasions. But interestingly, while it was built in 1908 during Manuel II's reign, it was only inaugurated in 1933, during the First Republic.",
+      funFact: "In its center is the Monument to the People and Heroes of the Peninsular War, commemorating resistance to Napoleon’s invasions. But interestingly, while it was built in 1908 during Manuel II's reign, it was only inaugurated in 1933, during the Estado Novo.",
       imageUrl: 'entrecampos.jpg',
       mapAddress: 'Rotunda de Entrecampos, 1700-157 Lisboa',
       lat: 38.748640,
