@@ -13,7 +13,7 @@ window.APP_CONFIG = {
       lat: 38.755280,
       lng: -9.157573,
       questions: [
-        { id: 'q1', text: 'CP1 question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+        { id: 'q1', text: 'How many posters were there on the Workshop today?', type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62' },
         { id: 'q2', text: 'CP1 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
         { id: 'q3', text: 'CP1 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
       ]
