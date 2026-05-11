@@ -42,6 +42,7 @@ let finished = false;
 let startedAt = null;
 let completedAt = null;
 let elapsedSeconds = 0;
+let questionTimerStartedAt = null;
 let timerInterval = null;
 let resultsPollInterval = null;
 let releasedResults = null;
@@ -100,13 +101,16 @@ function calculateScore(allAnswers) {
   return total;
 }
 
-function getAnswersWithTimerMetadata() {
+function getAnswersWithTimerMetadata(currentElapsedSeconds = getCurrentElapsedSeconds()) {
   return {
     ...answers,
     _timer: {
       started_at: startedAt,
       completed_at: completedAt,
-      elapsed_seconds: getCurrentElapsedSeconds()
+      elapsed_seconds: currentElapsedSeconds,
+      accumulated_seconds: elapsedSeconds,
+      active_started_at: questionTimerStartedAt,
+      mode: 'question_time_only'
     }
   };
 }
@@ -135,17 +139,14 @@ function getFateElapsedTime(teamEntry) {
   if (saved?.elapsed_seconds > 0) {
     return formatElapsedTime(saved.elapsed_seconds);
   }
+  if (saved?.question_timer_started_at) {
+    const activeSeconds = Math.floor((Date.now() - new Date(saved.question_timer_started_at).getTime()) / 1000);
+    return formatElapsedTime((Number(saved.elapsed_seconds) || 0) + Math.max(0, activeSeconds));
+  }
   if (saved?.started_at) {
-    const endTime = saved.completed_at ? new Date(saved.completed_at).getTime() : Date.now();
-    const startTime = new Date(saved.started_at).getTime();
-    return formatElapsedTime(Math.max(0, Math.floor((endTime - startTime) / 1000)));
+    return formatElapsedTime(Number(saved.elapsed_seconds) || 0);
   }
-  if (startedAt) {
-    const endTime = completedAt ? new Date(completedAt).getTime() : Date.now();
-    const startTime = new Date(startedAt).getTime();
-    return formatElapsedTime(Math.max(0, Math.floor((endTime - startTime) / 1000)));
-  }
-  return formatElapsedTime(elapsedSeconds);
+  return formatElapsedTime(getCurrentElapsedSeconds());
 }
 
 function getMapLinkHtml(checkpoint) {
@@ -164,15 +165,18 @@ function formatElapsedTime(totalSeconds = 0) {
 }
 
 function getCurrentElapsedSeconds() {
-  if (elapsedSeconds > 0 && finished) return elapsedSeconds;
-  if (!startedAt) return elapsedSeconds || 0;
-  const endTime = finished && completedAt ? new Date(completedAt).getTime() : Date.now();
-  return Math.max(0, Math.floor((endTime - new Date(startedAt).getTime()) / 1000));
+  const baseSeconds = Number(elapsedSeconds) || 0;
+  if (!questionTimerStartedAt || finished) return baseSeconds;
+  const activeSeconds = Math.floor((Date.now() - new Date(questionTimerStartedAt).getTime()) / 1000);
+  return baseSeconds + Math.max(0, activeSeconds);
 }
 
 function renderTimer() {
-  elapsedSeconds = getCurrentElapsedSeconds();
-  const formatted = formatElapsedTime(elapsedSeconds);
+  const currentElapsedSeconds = getCurrentElapsedSeconds();
+  if (!questionTimerStartedAt) {
+    elapsedSeconds = currentElapsedSeconds;
+  }
+  const formatted = formatElapsedTime(currentElapsedSeconds);
   timePill.textContent = `Time: ${formatted}`;
   if (timerDisplay) {
     timerDisplay.textContent = formatted;
@@ -182,9 +186,27 @@ function renderTimer() {
 function startTimerTicker() {
   if (timerInterval) clearInterval(timerInterval);
   renderTimer();
-  if (currentTeam && startedAt && !finished) {
+  if (currentTeam && questionTimerStartedAt && !finished) {
     timerInterval = setInterval(renderTimer, 1000);
   }
+}
+
+function startQuestionTimer() {
+  if (!currentTeam || finished || questionTimerStartedAt) return;
+  questionTimerStartedAt = new Date().toISOString();
+  saveLocalTeamState();
+  startTimerTicker();
+  upsertTeamRecord();
+}
+
+function stopQuestionTimer() {
+  if (!questionTimerStartedAt) return;
+  elapsedSeconds = getCurrentElapsedSeconds();
+  questionTimerStartedAt = null;
+  saveLocalTeamState();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+  renderTimer();
 }
 
 function haversineDistanceMeters(lat1, lon1, lat2, lon2) {
@@ -208,6 +230,7 @@ function resetLocalTeamState() {
   startedAt = null;
   completedAt = null;
   elapsedSeconds = 0;
+  questionTimerStartedAt = null;
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = null;
   localStorage.removeItem(TEAM_STORAGE_KEY);
@@ -231,7 +254,8 @@ function saveLocalTeamState() {
     finished,
     started_at: startedAt,
     completed_at: completedAt,
-    elapsed_seconds: elapsedSeconds
+    elapsed_seconds: elapsedSeconds,
+    question_timer_started_at: questionTimerStartedAt
   }));
 }
 
@@ -259,6 +283,7 @@ function loadLocalTeamState(teamName) {
     startedAt = saved.started_at || new Date().toISOString();
     completedAt = saved.completed_at || null;
     elapsedSeconds = saved.elapsed_seconds || 0;
+    questionTimerStartedAt = saved.question_timer_started_at || null;
     return true;
   } catch (error) {
     console.warn('Failed to restore local team state.', error);
@@ -595,16 +620,19 @@ function getMissingSchemaColumn(error) {
 }
 
 async function upsertTeamRecord() {
-  elapsedSeconds = getCurrentElapsedSeconds();
+  const currentElapsedSeconds = getCurrentElapsedSeconds();
+  if (!questionTimerStartedAt) {
+    elapsedSeconds = currentElapsedSeconds;
+  }
   const payload = {
     team_name: currentTeam,
     current_stage: currentStage,
-    answers: getAnswersWithTimerMetadata(),
+    answers: getAnswersWithTimerMetadata(currentElapsedSeconds),
     score,
     finished,
     started_at: startedAt,
     completed_at: completedAt,
-    elapsed_seconds: elapsedSeconds,
+    elapsed_seconds: currentElapsedSeconds,
     updated_at: new Date().toISOString()
   };
 
@@ -676,6 +704,8 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
     const saved = readLocalTeamState(data.team_name);
     const onlineElapsed = Number(data.elapsed_seconds) || 0;
     const localElapsed = Number(saved?.elapsed_seconds) || 0;
+    const timer = data.answers?._timer || {};
+    const jsonElapsed = Number(timer.elapsed_seconds) || 0;
     currentTeam = data.team_name;
     currentStage = data.current_stage || saved?.current_stage || 1;
     answers = Object.keys(data.answers || {}).length ? data.answers : (saved?.answers || {});
@@ -683,7 +713,8 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
     finished = !!data.finished;
     startedAt = data.started_at || saved?.started_at || new Date().toISOString();
     completedAt = data.completed_at || saved?.completed_at || null;
-    elapsedSeconds = Math.max(onlineElapsed, localElapsed);
+    elapsedSeconds = Math.max(onlineElapsed, localElapsed, jsonElapsed);
+    questionTimerStartedAt = saved?.question_timer_started_at || null;
   } else if (!error && createIfMissing) {
     currentTeam = teamName;
     currentStage = 1;
@@ -693,6 +724,7 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
     startedAt = new Date().toISOString();
     completedAt = null;
     elapsedSeconds = 0;
+    questionTimerStartedAt = null;
     await upsertTeamRecord();
   } else if (!error) {
     resetLocalTeamState();
@@ -701,7 +733,11 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
   }
   saveLocalTeamState();
   teamCard.classList.add('hidden');
-  startTimerTicker();
+  if (!finished && currentStage === 1) {
+    startQuestionTimer();
+  } else {
+    startTimerTicker();
+  }
   startResultsPolling();
   renderAll();
   if (finished) showFinal();
@@ -718,6 +754,7 @@ function showUnlockedQuestions(message) {
   locationStatus.textContent = message;
   locationCard.classList.add('hidden');
   quizCard.classList.remove('hidden');
+  startQuestionTimer();
   quizCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -763,11 +800,11 @@ quizForm.addEventListener('submit', async e => {
     answers[q.id] = String(formData.get(q.id) || '').trim();
   });
 
+  stopQuestionTimer();
   score = calculateScore(answers);
 
   if (currentStage >= config.checkpoints.length) {
     completedAt = new Date().toISOString();
-    elapsedSeconds = getCurrentElapsedSeconds();
     finished = true;
     saveLocalTeamState();
     if (timerInterval) clearInterval(timerInterval);

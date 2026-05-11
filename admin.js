@@ -46,14 +46,18 @@ function formatElapsedTime(totalSeconds = 0) {
 }
 
 function getDisplayElapsedSeconds(team) {
-  const storedElapsed = Number(team.elapsed_seconds) || 0;
-  if (storedElapsed > 0) {
-    return storedElapsed;
-  }
   const timer = team.answers?._timer || {};
+  if (timer.active_started_at && !team.finished) {
+    const activeSeconds = Math.floor((Date.now() - new Date(timer.active_started_at).getTime()) / 1000);
+    return (Number(timer.accumulated_seconds) || 0) + Math.max(0, activeSeconds);
+  }
   const jsonElapsed = Number(timer.elapsed_seconds) || 0;
   if (jsonElapsed > 0) {
     return jsonElapsed;
+  }
+  const storedElapsed = Number(team.elapsed_seconds) || 0;
+  if (storedElapsed > 0) {
+    return storedElapsed;
   }
   const started = team.started_at || timer.started_at;
   if (!started) return 0;
