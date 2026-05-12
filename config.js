@@ -15,10 +15,10 @@ window.APP_CONFIG = {
       lat: 38.755280,
       lng: -9.157573,
       questions: [
-        { id: 'q1', text: 'CP1 question 1?', type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62' },
-        { id: 'q2', text: 'CP1 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q3', text: 'Which language family does Basque belong to?', type: 'multiple-choice', 
+        { id: 'q1', text: 'Which philosopher wrote The Republic?', type: 'multiple-choice', options: ['Aristotle', 'Plato', 'Socrates', 'Epicurus'], correctAnswer: 'Plato' },
+        { id: 'q2', text: 'Which language family does Basque belong to?', type: 'multiple-choice', 
          options: ['Indo-European', 'Uralic', 'Aquitanian', "It doesn't have one"], correctAnswer: "It doesn't have one" }
+        { id: 'q3', text: 'Which ancient civilization developed cuneiform writing?', type: 'multiple-choice', options: ['Egyptians', 'Sumerians', 'Phoenicians', 'Persians'], correctAnswer: 'Sumerians' },
       ]
     },
     {
@@ -86,8 +86,8 @@ window.APP_CONFIG = {
       lat: 38.739970,
       lng: -9.142523,
       questions: [
-        { id: 'q13', text: 'Which ancient civilization developed cuneiform writing?', type: 'multiple-choice', options: ['Egyptians', 'Sumerians', 'Phoenicians', 'Persians'], correctAnswer: 'Sumerians' },
-        { id: 'q14', text: 'Which philosopher wrote The Republic?', type: 'multiple-choice', options: ['Aristotle', 'Plato', 'Socrates', 'Epicurus'], correctAnswer: 'Plato' },
+        { id: 'q13', text: '', type: 'multiple-choice', options: ['', '', '', ''], correctAnswer: '' },
+        { id: 'q14', text: '', type: 'multiple-choice', options: ['', '', '', ''], correctAnswer: '' },
         { id: 'q15', text: 'CP5 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
       ]
     },
