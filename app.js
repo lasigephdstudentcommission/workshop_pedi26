@@ -10,6 +10,7 @@ const quizCard = document.getElementById('quizCard');
 const quizForm = document.getElementById('quizForm');
 const quizEyebrow = document.getElementById('quizEyebrow');
 const quizTitle = document.getElementById('quizTitle');
+const quizSubtitle = document.getElementById('quizSubtitle');
 const finalCard = document.getElementById('finalCard');
 const finalMessage = document.getElementById('finalMessage');
 const heroCard = document.querySelector('.hero-card');
@@ -405,6 +406,7 @@ function renderQuestions() {
   quizCard.classList.remove('hidden');
   quizEyebrow.textContent = 'Palace Pursuit';
   quizTitle.textContent = `Checkpoint ${currentStage}`;
+  quizSubtitle.textContent = checkpoint.questionSubtitle || '';
   quizForm.innerHTML = `
     ${checkpoint.imageUrl ? `
       <div class="checkpoint-media-wrap">
