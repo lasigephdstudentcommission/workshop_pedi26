@@ -15,7 +15,7 @@ window.APP_CONFIG = {
       lat: 38.755280,
       lng: -9.157573,
       questions: [
-        { id: 'q1', text: 'How many posters were there on the Workshop today?', type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62' },
+        { id: 'q1', text: 'CP1 question 1?', type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62' },
         { id: 'q2', text: 'CP1 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
         { id: 'q3', text: 'CP1 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
       ]
@@ -69,7 +69,8 @@ window.APP_CONFIG = {
       questions: [
         { id: 'q10', text: 'Which scientist proposed the theory of continental drift?', type: 'multiple-choice', options: ['Charles Lyell', 'Alfred Wegener', 'James Hutton', 'Niels Bohr'], correctAnswer: 'Alfred Wegener' },
         { id: 'q11', text: 'CP4 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q12', text: 'CP4 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
+        { id: 'q12', text: 'Which scientist formulated the exclusion principle in quantum mechanics?', type: 'multiple-choice', 
+         options: ['Werner Heisenberg', 'Niels Bohr', 'Wolfgang Pauli', 'Erwin Schrödinger'], correctAnswer: 'Wolfgang Pauli' }
       ]
     },
     {
@@ -98,7 +99,7 @@ window.APP_CONFIG = {
       lat: 38.737295,
       lng: -9.141942,
       questions: [
-        { id: 'q16', text: 'Final CP question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+        { id: 'q16', text: 'CP question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
         { id: 'q17', text: "How many posters were there at the Workshop's poster session?", type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62'},
         { id: 'q18', text: 'How many Distinguished Publication Diplomas were given today?', type: 'multiple-choice', options: ['65', '80', '90', '71'], correctAnswer: '80' }
       ]
