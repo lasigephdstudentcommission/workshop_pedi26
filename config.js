@@ -32,11 +32,11 @@ window.APP_CONFIG = {
       lat: 38.7526220,
       lng: -9.151514,
       questions: [
-        { id: 'q4', text: 'CP2 question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+        { id: 'q4', text: 'In which year was the Playstation 2 console released?', type: 'multiple-choice', 
+         options: ['2001', '1996', '1994', '1998'], correctAnswer: 'Option A' },
         { id: 'q5', text: 'CP2 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q6', text: 'In medieval Portugal, a “foral” was:', type: 'multiple-choice', 
-         options: ['A royal charter granting rights to a town or municipality', 'A tax paid by fishermen to the Crown', 
-                   'A military order’s oath of loyalty', 'A type of monastic land register'], correctAnswer: 'A royal charter granting rights to a town or municipality' }
+        { id: 'q6', text: 'In what year did the movie "The Godfather" (first part) premiere?', type: 'multiple-choice', 
+         options: ['1967', '1972', '1974', '1979'], correctAnswer: '1972' }
       ]
     },
     {
@@ -108,8 +108,8 @@ window.APP_CONFIG = {
         { id: 'q16', text: 'Which trio received the 2007 ACM A.M. Turing Award for developing model checking into a widely used verification technology?', type: 'multiple-choice', 
          options: ['Edmund M. Clarke, E. Allen Emerson, and Joseph Sifakis', 'Edsger Dijkstra, C. A. R. Hoare, and Robin Milner', 
                    'Leslie Lamport, Nancy Lynch, and Marshall Pease', 'Amir Pnueli, Moshe Vardi, and Pierre Wolper'], correctAnswer: 'Edmund M. Clarke, E. Allen Emerson, and Joseph Sifakis' },
+        { id: 'q18', text: 'How many bits are in a Megabyte (MB)?', type: 'multiple-choice', options: ['100000', '800000', '1600000', '8000000'], correctAnswer: '8000000' }        
         { id: 'q17', text: "How many posters were there at the Workshop's poster session?", type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62'},
-        { id: 'q18', text: 'How many Distinguished Publication Diplomas were given today?', type: 'multiple-choice', options: ['65', '80', '90', '71'], correctAnswer: '80' }
       ]
     }
   ]
