@@ -503,6 +503,13 @@ textarea {
   color: var(--text);
 }
 
+.quiz-subtitle {
+  margin: -8px 0 18px;
+  color: var(--muted);
+  font-weight: 650;
+  line-height: 1.45;
+}
+
 .checkpoint-story,
 .checkpoint-funfact {
   padding: 14px 16px;
