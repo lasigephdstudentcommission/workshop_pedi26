@@ -51,19 +51,13 @@ function getDisplayElapsedSeconds(team) {
     const activeSeconds = Math.floor((Date.now() - new Date(timer.active_started_at).getTime()) / 1000);
     return (Number(timer.accumulated_seconds) || 0) + Math.max(0, activeSeconds);
   }
-  const jsonElapsed = Number(timer.elapsed_seconds) || 0;
-  if (jsonElapsed > 0) {
-    return jsonElapsed;
+  if (timer.elapsed_seconds !== undefined && timer.elapsed_seconds !== null) {
+    return Math.max(0, Number(timer.elapsed_seconds) || 0);
   }
-  const storedElapsed = Number(team.elapsed_seconds) || 0;
-  if (storedElapsed > 0) {
-    return storedElapsed;
+  if (team.elapsed_seconds !== undefined && team.elapsed_seconds !== null) {
+    return Math.max(0, Number(team.elapsed_seconds) || 0);
   }
-  const started = team.started_at || timer.started_at;
-  if (!started) return 0;
-  const completed = team.completed_at || timer.completed_at;
-  const endTime = completed ? new Date(completed).getTime() : Date.now();
-  return Math.max(0, Math.floor((endTime - new Date(started).getTime()) / 1000));
+  return 0;
 }
 
 function sortTeamsForLeaderboard(teams) {
