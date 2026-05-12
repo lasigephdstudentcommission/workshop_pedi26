@@ -48,7 +48,8 @@ window.APP_CONFIG = {
       lat: 38.748640,
       lng: -9.148444,
       questions: [
-        { id: 'q7', text: 'CP3 question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+        { id: 'q7', text: 'Which semi-heteronym is most associated with Fernando Pessoa’s The Book of Disquiet?', type: 'multiple-choice',
+         options: ['Ricardo Reis', 'Álvaro de Campos', 'Bernardo Soares', 'Alberto Caeiro'], correctAnswer: 'Bernardo Soares' },
         { id: 'q8', text: 'CP3 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
         { id: 'q9', text: 'Which Portuguese mathematician is associated with major work on navigation, including the study of rhumb lines?', 
          type: 'multiple-choice', options: ['Pedro Nunes', 'Garcia de Orta', 'Duarte Pacheco Pereira', 'Damião de Góis'], correctAnswer: 'Pedro Nunes' }
