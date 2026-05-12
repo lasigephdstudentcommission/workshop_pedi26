@@ -69,7 +69,8 @@ window.APP_CONFIG = {
       lng: -9.144962,
       questions: [
         { id: 'q10', text: 'Which scientist proposed the theory of continental drift?', type: 'multiple-choice', options: ['Charles Lyell', 'Alfred Wegener', 'James Hutton', 'Niels Bohr'], correctAnswer: 'Alfred Wegener' },
-        { id: 'q11', text: 'CP4 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+        { id: 'q11', text: 'The photograph known as “Photo 51” was crucial to understanding the structure of:', type: 'multiple-choice', 
+         options: ['DNA molecule', 'Penicillin', 'The atom', 'Protein alpha helix'], correctAnswer: 'DNA molecule' },
         { id: 'q12', text: 'Which scientist formulated the exclusion principle in quantum mechanics?', type: 'multiple-choice', 
          options: ['Werner Heisenberg', 'Niels Bohr', 'Wolfgang Pauli', 'Erwin Schrödinger'], correctAnswer: 'Wolfgang Pauli' }
       ]
