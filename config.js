@@ -8,6 +8,7 @@ window.APP_CONFIG = {
       id: 1,
       name: 'CP 1 - C6',
       description: 'C6',
+      questionSubtitle: "Testing Our Foundations",
       funFact: "The feast is waiting, but first comes the pursuit! Solve this checkpoint's questions to begin the palace trail. Time is ticking, don't waste it!",
       imageUrl: 'c6_fcul.jpg',
       imageFit: 'contain',
@@ -25,6 +26,7 @@ window.APP_CONFIG = {
       id: 2,
       name: 'CP 2 - Palacete Pires Mendes',
       description: 'Palacete Pires Mendes',
+      questionSubtitle: "Know your pop culture!",
       funFact: 'One of Lisbon’s few eclectic-meets-Art Nouveau "palacetes" (small palaces), Palacete Pires Mendes retains a remarkable set of allegorical azulejo panels and has recently been rehabilitated as an educational facility.',
       imageUrl: 'pires_mendes.webp',
       imageFit: 'contain',
@@ -44,6 +46,7 @@ window.APP_CONFIG = {
       id: 3,
       name: 'CP 3 - Jardim da Rotunda de Entrecampos',
       description: 'Jardim da Rotunda de Entrecampos',
+      questionSubtitle: "Portuguese trivia round!",
       funFact: "In its center is the Monument to the People and Heroes of the Peninsular War, commemorating resistance to Napoleon’s invasions. But interestingly, while it was built in 1908 during Manuel II's reign, it was only inaugurated in 1933, during the Estado Novo.",
       imageUrl: 'entrecampos.jpg',
       mapAddress: 'Rotunda de Entrecampos, 1700-157 Lisboa',
@@ -62,6 +65,7 @@ window.APP_CONFIG = {
       id: 4,
       name: 'CP 4 - Palacio das Vianinhas',
       description: 'Palácio das Vianinhas',
+      questionSubtitle: 'Questions that reshaped science',
       funFact: 'Originally a banker’s suburban palace, became a Franciscan children’s and nursing institution, and now the headquarters of the national Misericórdia organization — while the old Entrecampos around it was completely transformed.',
       imageUrl: 'vianinhas.jpg',
       imageFit: 'contain',
@@ -80,6 +84,7 @@ window.APP_CONFIG = {
       id: 5,
       name: 'CP 5 - Estatua Antonio Jose de Almeida',
       description: 'Estátua António José de Almeida',
+      questionSubtitle: "Crossing the (research) lines",
       funFact: 'António José de Almeida, known as the Republic’s greatest orator, was the 6th President of the First Portuguese Republic and the only one to complete the full four-year term.',
       imageUrl: 'estatua.jpg',
       imageFit: 'contain',
@@ -100,6 +105,7 @@ window.APP_CONFIG = {
       id: 6,
       name: "Final CP - Gula's",
       description: "Gula's for Kitchen Lovers",
+      questionSubtitle: "Crossing the (research) lines - Pt II",
       funFact: 'The palace trail ends here! After chasing monuments across Lisbon, the final stop brings the trail back to the table. But before that... ',
       imageUrl: 'gula.avif',
       mapAddress: 'R. Dona Filipa de Vilhena 18A, 1000-136 Lisboa',
@@ -109,8 +115,8 @@ window.APP_CONFIG = {
         { id: 'q16', text: 'Which trio received the 2007 ACM A.M. Turing Award for developing model checking into a widely used verification technology?', type: 'multiple-choice', 
          options: ['Edmund M. Clarke, E. Allen Emerson, and Joseph Sifakis', 'Edsger Dijkstra, C. A. R. Hoare, and Robin Milner', 
                    'Leslie Lamport, Nancy Lynch, and Marshall Pease', 'Amir Pnueli, Moshe Vardi, and Pierre Wolper'], correctAnswer: 'Edmund M. Clarke, E. Allen Emerson, and Joseph Sifakis' },
-        { id: 'q18', text: 'How many bits are in a Megabyte (MB)?', type: 'multiple-choice', options: ['100000', '800000', '1600000', '8000000'], correctAnswer: '8000000' }        
-        { id: 'q17', text: "How many posters were there at the Workshop's poster session?", type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62'},
+        { id: 'q18', text: 'How many bits are in a Megabyte (MB)?', type: 'multiple-choice', options: ['100000', '800000', '1600000', '8000000'], correctAnswer: '8000000' },       
+        { id: 'q17', text: "How many posters were there at the Workshop's poster session?", type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62'}
       ]
     }
   ]
