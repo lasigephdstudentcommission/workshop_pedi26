@@ -8,7 +8,7 @@ window.APP_CONFIG = {
       id: 1,
       name: 'CP 1 - C6',
       description: 'C6',
-      funFact: "The feast is waiting, but first comes the pursuit! Solve this checkpoint's questions to begin the palace trail.",
+      funFact: "The feast is waiting, but first comes the pursuit! Solve this checkpoint's questions to begin the palace trail. Time is ticking, don't waste it!",
       imageUrl: 'c6_fcul.jpg',
       imageFit: 'contain',
       mapAddress: 'Campo Grande 016, 1749-016 Lisboa',
