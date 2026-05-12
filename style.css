@@ -720,6 +720,7 @@ textarea {
   border-radius: 12px;
   background: #ffffff;
   border: 1px solid var(--border);
+  text-align: center;
 }
 
 .checkpoint-image {
@@ -728,6 +729,11 @@ textarea {
   max-height: 340px;
   object-fit: cover;
   border-radius: 10px;
+}
+
+.checkpoint-image--contain {
+  object-fit: contain;
+  background: #fff;
 }
 
 .checkpoint-media-card figcaption {
