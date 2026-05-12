@@ -55,6 +55,7 @@ window.APP_CONFIG = {
       description: 'Palácio das Vianinhas',
       funFact: 'Originally a banker’s suburban palace, became a Franciscan children’s and nursing institution, and now the headquarters of the national Misericórdia organization — while the old Entrecampos around it was completely transformed.',
       imageUrl: 'vianinhas.jpg',
+      imageFit: 'contain',
       mapAddress: 'Rua de Entrecampos, nº 9, Lisboa',
       lat: 38.744235,
       lng: -9.144962,
