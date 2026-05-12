@@ -33,7 +33,9 @@ window.APP_CONFIG = {
       questions: [
         { id: 'q4', text: 'CP2 question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
         { id: 'q5', text: 'CP2 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q6', text: 'CP2 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
+        { id: 'q6', text: 'In medieval Portugal, a “foral” was:', type: 'multiple-choice', 
+         options: ['A royal charter granting rights to a town or municipality', 'A tax paid by fishermen to the Crown', 
+                   'A military order’s oath of loyalty', 'A type of monastic land register'], correctAnswer: 'A royal charter granting rights to a town or municipality' }
       ]
     },
     {
@@ -48,7 +50,8 @@ window.APP_CONFIG = {
       questions: [
         { id: 'q7', text: 'CP3 question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
         { id: 'q8', text: 'CP3 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q9', text: 'CP3 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
+        { id: 'q9', text: 'Which Portuguese mathematician is associated with major work on navigation, including the study of rhumb lines?', 
+         type: 'multiple-choice', options: ['Pedro Nunes', 'Garcia de Orta', 'Duarte Pacheco Pereira', 'Damião de Góis'], correctAnswer: 'Pedro Nunes' }
       ]
     },
     {
