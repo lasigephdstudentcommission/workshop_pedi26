@@ -416,7 +416,7 @@ function renderQuestions() {
     ${checkpoint.questions.map((q, index) => `
     <div class="question">
       <h3>Question ${index + 1}</h3>
-      <p class="question-text">Description ${index + 1}</p>
+      <p class="question-text">${escapeHtml(q.text)}</p>
       ${renderQuestionInput(q)}
     </div>
   `).join('')}
