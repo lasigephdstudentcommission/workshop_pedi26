@@ -86,9 +86,13 @@ window.APP_CONFIG = {
       lat: 38.739970,
       lng: -9.142523,
       questions: [
-        { id: 'q13', text: '', type: 'multiple-choice', options: ['', '', '', ''], correctAnswer: '' },
-        { id: 'q14', text: '', type: 'multiple-choice', options: ['', '', '', ''], correctAnswer: '' },
-        { id: 'q15', text: 'CP5 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
+        { id: 'q13', text: 'Which group of researchers introduced the formal privacy definition now known as differential privacy?', type: 'multiple-choice', 
+         options: ['Diffie, Hellman, and Merkle', 'Dwork, McSherry, Nissim, and Smith', 'Goldwasser, Micali, and Rackoff', 'Rivest, Shamir, and Adleman'], 
+         correctAnswer: 'Dwork, McSherry, Nissim, and Smith' },
+        { id: 'q14', text: 'Which researcher’s 1954 work led to a law used in HCI to model target-acquisition time as a function of distance and target width?', 
+         type: 'multiple-choice', options: ['Paul M. Fitts', 'Stuart K. Card', 'George A. Miller', 'Donald A. Norman'], correctAnswer: 'Paul M. Fitts' },
+        { id: 'q15', text: 'Which expert system developed at Stanford became a landmark in medical AI for reasoning about bacterial infections and antibiotic treatment?', 
+         type: 'multiple-choice', options: ['MYCIN', 'INTERNIST-I', 'CADUCEUS', 'DENDRAL'], correctAnswer: 'MYCIN' }
       ]
     },
     {
@@ -101,7 +105,9 @@ window.APP_CONFIG = {
       lat: 38.737295,
       lng: -9.141942,
       questions: [
-        { id: 'q16', text: 'CP question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+        { id: 'q16', text: 'Which trio received the 2007 ACM A.M. Turing Award for developing model checking into a widely used verification technology?', type: 'multiple-choice', 
+         options: ['Edmund M. Clarke, E. Allen Emerson, and Joseph Sifakis', 'Edsger Dijkstra, C. A. R. Hoare, and Robin Milner', 
+                   'Leslie Lamport, Nancy Lynch, and Marshall Pease', 'Amir Pnueli, Moshe Vardi, and Pierre Wolper'], correctAnswer: 'Edmund M. Clarke, E. Allen Emerson, and Joseph Sifakis' },
         { id: 'q17', text: "How many posters were there at the Workshop's poster session?", type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62'},
         { id: 'q18', text: 'How many Distinguished Publication Diplomas were given today?', type: 'multiple-choice', options: ['65', '80', '90', '71'], correctAnswer: '80' }
       ]
