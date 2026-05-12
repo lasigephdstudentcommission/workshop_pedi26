@@ -18,7 +18,7 @@ window.APP_CONFIG = {
       questions: [
         { id: 'q1', text: 'Which philosopher wrote The Republic?', type: 'multiple-choice', options: ['Aristotle', 'Plato', 'Socrates', 'Epicurus'], correctAnswer: 'Plato' },
         { id: 'q2', text: 'Which language family does Basque belong to?', type: 'multiple-choice', 
-         options: ['Indo-European', 'Uralic', 'Aquitanian', "It doesn't have one"], correctAnswer: "It doesn't have one" }
+         options: ['Indo-European', 'Uralic', 'Aquitanian', "It doesn't have one"], correctAnswer: "It doesn't have one" },
         { id: 'q3', text: 'Which ancient civilization developed cuneiform writing?', type: 'multiple-choice', options: ['Egyptians', 'Sumerians', 'Phoenicians', 'Persians'], correctAnswer: 'Sumerians' },
       ]
     },
