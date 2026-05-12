@@ -94,8 +94,8 @@ window.APP_CONFIG = {
       lng: -9.141942,
       questions: [
         { id: 'q16', text: 'Final CP question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q17', text: 'Final CP question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q18', text: 'How many diplomas were given today?', type: 'multiple-choice', options: ['42', '35', '62', '53'], correctAnswer: '62' }
+        { id: 'q17', text: "How many posters were there at the Workshop's poster session?", type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62'},
+        { id: 'q18', text: 'How many Distinguished Publication Diplomas were given today?', type: 'multiple-choice', options: ['65', '80', '90', '71'], correctAnswer: '80' }
       ]
     }
   ]
