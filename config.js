@@ -17,7 +17,8 @@ window.APP_CONFIG = {
       questions: [
         { id: 'q1', text: 'CP1 question 1?', type: 'multiple-choice', options: ['62', '60', '54', '52'], correctAnswer: '62' },
         { id: 'q2', text: 'CP1 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q3', text: 'CP1 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
+        { id: 'q3', text: 'Which language family does Basque belong to?', type: 'multiple-choice', 
+         options: ['Indo-European', 'Uralic', 'Aquitanian', "It doesn't have one"], correctAnswer: "It doesn't have one" }
       ]
     },
     {
