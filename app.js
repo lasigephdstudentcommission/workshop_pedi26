@@ -115,6 +115,10 @@ function getAnswersWithTimerMetadata(currentElapsedSeconds = getCurrentElapsedSe
   };
 }
 
+function isCurrentStageUnlocked() {
+  return currentStage === 1 || !!questionTimerStartedAt;
+}
+
 function getCheckpoint(stage) {
   return config.checkpoints[stage - 1] || null;
 }
@@ -334,12 +338,13 @@ function renderCheckpointGate() {
     return;
   }
 
-  const isFirstStage = currentStage === 1;
-  locationCard.classList.toggle('hidden', isFirstStage);
-  if (isFirstStage) {
-    checkpointMediaWrap.innerHTML = '';
-    return;
-  }
+const questionsUnlocked = isCurrentStageUnlocked();
+locationCard.classList.toggle('hidden', questionsUnlocked);
+
+if (questionsUnlocked) {
+  checkpointMediaWrap.innerHTML = '';
+  return;
+}
 
   checkpointDescription.textContent = '';
   locationEyebrow.textContent = 'Palace Pursuit';
@@ -388,7 +393,7 @@ function renderQuestionInput(q) {
 
 function renderQuestions() {
   const checkpoint = getCheckpoint(currentStage);
-  if (!checkpoint || finished || !currentTeam) {
+  if (!checkpoint || finished || !currentTeam || !isCurrentStageUnlocked()) {
     quizCard.classList.add('hidden');
     return;
   }
@@ -413,10 +418,6 @@ function renderQuestions() {
   `).join('')}
     <button type="submit">Reveal next checkpoint</button>
   `;
-
-  if (currentStage > 1) {
-    quizCard.classList.add('hidden');
-  }
 }
 
 function showFinal() {
@@ -714,7 +715,8 @@ async function loadExistingTeam(teamName, { createIfMissing = true } = {}) {
     startedAt = data.started_at || saved?.started_at || new Date().toISOString();
     completedAt = data.completed_at || saved?.completed_at || null;
     elapsedSeconds = Math.max(onlineElapsed, localElapsed, jsonElapsed);
-    questionTimerStartedAt = saved?.question_timer_started_at || null;
+    const activeStartedAt = timer.active_started_at || null;
+    questionTimerStartedAt = saved?.question_timer_started_at || (!finished ? activeStartedAt : null);
   } else if (!error && createIfMissing) {
     currentTeam = teamName;
     currentStage = 1;
