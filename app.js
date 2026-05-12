@@ -80,10 +80,14 @@ function renderFunFactText(text = '') {
 
 function renderCheckpointMedia(checkpoint) {
   if (!checkpoint.imageUrl) return '';
+  const fitClass =
+    checkpoint.imageFit === 'contain'
+      ? 'checkpoint-image checkpoint-image--contain'
+      : 'checkpoint-image';
 
   return `
     <figure class="checkpoint-media-card">
-      <img class="checkpoint-image" src="${escapeHtml(checkpoint.imageUrl)}" alt="${escapeHtml(checkpoint.description)}" loading="lazy" />
+      <img class="${fitClass}" src="${escapeHtml(checkpoint.imageUrl)}" alt="${escapeHtml(checkpoint.description)}" loading="lazy" />
       <figcaption>${escapeHtml(checkpoint.description)}</figcaption>
     </figure>
   `;
