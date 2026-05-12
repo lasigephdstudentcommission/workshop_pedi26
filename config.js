@@ -33,8 +33,9 @@ window.APP_CONFIG = {
       lng: -9.151514,
       questions: [
         { id: 'q4', text: 'In which year was the Playstation 2 console released?', type: 'multiple-choice', 
-         options: ['2001', '1996', '1994', '1998'], correctAnswer: 'Option A' },
-        { id: 'q5', text: 'CP2 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+         options: ['2001', '1996', '2000', '1998'], correctAnswer: '2000' },
+        { id: 'q5', text: 'In The Matrix Reloaded, what is the name of the underground human city?', 
+         type: 'multiple-choice', options: ['Elysium', 'Zero One', 'Zion', 'Arcadia'], correctAnswer: 'Zion' },
         { id: 'q6', text: 'In what year did the movie "The Godfather" (first part) premiere?', type: 'multiple-choice', 
          options: ['1967', '1972', '1974', '1979'], correctAnswer: '1972' }
       ]
