@@ -754,9 +754,10 @@ function renderAll() {
 
 function showUnlockedQuestions(message) {
   locationStatus.textContent = message;
-  locationCard.classList.add('hidden');
-  quizCard.classList.remove('hidden');
   startQuestionTimer();
+  renderQuestions();
+  renderStatus();
+  locationCard.classList.add('hidden');
   quizCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
