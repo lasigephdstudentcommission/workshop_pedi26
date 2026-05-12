@@ -2,7 +2,7 @@ window.APP_CONFIG = {
   supabaseUrl: 'https://hzejllwtsowkkawwxdqc.supabase.co/',
   supabaseAnonKey: 'sb_publishable_7VXAMk_joCrNFKSzJrnMJQ_8E7abVdi',
   quizmasterPassword: 'HAKUNAMATATA!',
-  unlockRadiusMeters: 80,
+  unlockRadiusMeters: 110,
   checkpoints: [
     {
       id: 1,
