@@ -62,7 +62,7 @@ window.APP_CONFIG = {
       lat: 38.744235,
       lng: -9.144962,
       questions: [
-        { id: 'q10', text: 'CP4 question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+        { id: 'q10', text: 'Which scientist proposed the theory of continental drift?', type: 'multiple-choice', options: ['Charles Lyell', 'Alfred Wegener', 'James Hutton', 'Niels Bohr'], correctAnswer: 'Alfred Wegener' },
         { id: 'q11', text: 'CP4 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
         { id: 'q12', text: 'CP4 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
       ]
@@ -78,8 +78,8 @@ window.APP_CONFIG = {
       lat: 38.739970,
       lng: -9.142523,
       questions: [
-        { id: 'q13', text: 'CP5 question 1?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
-        { id: 'q14', text: 'CP5 question 2?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' },
+        { id: 'q13', text: 'Which ancient civilization developed cuneiform writing?', type: 'multiple-choice', options: ['Egyptians', 'Sumerians', 'Phoenicians', 'Persians'], correctAnswer: 'Sumerians' },
+        { id: 'q14', text: 'Which philosopher wrote The Republic?', type: 'multiple-choice', options: ['Aristotle', 'Plato', 'Socrates', 'Epicurus'], correctAnswer: 'Plato' },
         { id: 'q15', text: 'CP5 question 3?', type: 'multiple-choice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 'Option A' }
       ]
     },
