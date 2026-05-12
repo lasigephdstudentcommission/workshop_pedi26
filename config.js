@@ -25,7 +25,7 @@ window.APP_CONFIG = {
       id: 2,
       name: 'CP 2 - Palacete Pires Mendes',
       description: 'Palacete Pires Mendes',
-      funFact: 'An ecletic-meets-art nouveau palace, .',
+      funFact: 'One of Lisbon’s few eclectic-meets-Art Nouveau "palacetes" (small palaces), Palacete Pires Mendes retains a remarkable set of allegorical azulejo panels and has recently been rehabilitated as an educational facility.',
       imageUrl: 'pires_mendes.webp',
       imageFit: 'contain',
       mapAddress: 'Campo Grande 101, 1700-162 Lisboa',
